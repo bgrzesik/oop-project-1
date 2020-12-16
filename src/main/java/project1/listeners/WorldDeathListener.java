@@ -4,6 +4,7 @@ import project1.actors.WorldActor;
 import project1.world.World;
 
 public class WorldDeathListener implements DeathListener {
+
     private World world;
 
     public WorldDeathListener(World world) {

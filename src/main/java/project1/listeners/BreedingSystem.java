@@ -2,6 +2,7 @@ package project1.listeners;
 
 import imgui.Dir;
 import project1.Direction;
+import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.WorldActor;
 import project1.world.Cell;
@@ -18,7 +19,7 @@ public class BreedingSystem implements CollisionListener {
     private int born = 0;
 
     @Override
-    public void collided(World world, Set<WorldActor> actors, Cell cell) {
+    public void collided(Simulation simulation, Set<WorldActor> actors, Cell cell) {
 
         Iterator<Animal> animals = actors.stream()
                                          .filter(a -> a instanceof Animal)
@@ -36,7 +37,7 @@ public class BreedingSystem implements CollisionListener {
 
             Animal animalB = animals.next();
 
-            breed(world, animalA, animalB);
+            breed(simulation.getWorld(), animalA, animalB);
         }
 
     }

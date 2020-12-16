@@ -1,8 +1,6 @@
 package project1.listeners;
 
-import glm_.vec2.Vec2;
 import glm_.vec2.Vec2i;
-import project1.actors.Animal;
 import project1.actors.WorldActor;
 import project1.world.World;
 

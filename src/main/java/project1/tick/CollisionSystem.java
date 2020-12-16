@@ -16,9 +16,8 @@ public class CollisionSystem implements CellTickListener {
     @Override
     public void tick(Simulation simulation, Cell cell) {
         Set<WorldActor> actors = cell.getActors();
-        World world = simulation.getWorld();
         if (actors.size() > 1) {
-            listeners.forEach(l -> l.collided(world, actors, cell));
+            listeners.forEach(l -> l.collided(simulation, actors, cell));
         }
     }
 

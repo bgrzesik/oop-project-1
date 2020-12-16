@@ -1,5 +1,6 @@
 package project1.listeners;
 
+import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 public class FeedingSystem implements CollisionListener {
     @Override
-    public void collided(World world, Set<WorldActor> actors, Cell cell) {
+    public void collided(Simulation simulation, Set<WorldActor> actors, Cell cell) {
         Iterator<Bush> bushes = actors.stream()
                                       .filter(o -> o instanceof Bush)
                                       .map(o -> ((Bush) o))

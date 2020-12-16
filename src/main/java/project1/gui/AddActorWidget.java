@@ -3,7 +3,6 @@ package project1.gui;
 import glm_.vec2.Vec2;
 import imgui.ImGui;
 import imgui.MutableProperty0;
-import project1.Direction;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -1,7 +1,6 @@
 package project1.actors;
 
-import imgui.Dir;
-import project1.Direction;
+import project1.data.Direction;
 import project1.listeners.MoveObservable;
 import project1.listeners.MoveObserver;
 import project1.visitors.WorldActorVisitor;

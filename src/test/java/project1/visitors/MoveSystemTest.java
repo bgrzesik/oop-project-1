@@ -1,10 +1,8 @@
 package project1.visitors;
 
 import org.junit.Test;
-import project1.Direction;
 import project1.Simulation;
 import project1.actors.Animal;
-import project1.tick.SpawnSystem;
 import project1.world.World;
 
 import java.util.Arrays;

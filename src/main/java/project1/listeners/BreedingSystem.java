@@ -1,7 +1,6 @@
 package project1.listeners;
 
-import imgui.Dir;
-import project1.Direction;
+import project1.data.Direction;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.WorldActor;

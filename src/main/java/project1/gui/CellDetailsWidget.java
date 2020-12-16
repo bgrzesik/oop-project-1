@@ -2,9 +2,6 @@ package project1.gui;
 
 import glm_.vec2.Vec2;
 import imgui.*;
-import org.lwjgl.system.CallbackI;
-import project1.Direction;
-import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;

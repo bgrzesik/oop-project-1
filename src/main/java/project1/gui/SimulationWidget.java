@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import glm_.vec2.Vec2;
 import imgui.*;
 import kotlin.reflect.KMutableProperty0;
-import project1.Direction;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
@@ -14,7 +13,6 @@ import project1.visitors.StatisticsSystem;
 import project1.visitors.WorldActorVisitor;
 import project1.world.World;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class SimulationWidget implements Widget {

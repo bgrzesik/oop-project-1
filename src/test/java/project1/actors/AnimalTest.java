@@ -1,7 +1,6 @@
 package project1.actors;
 
 import org.junit.Test;
-import project1.Direction;
 
 import static org.junit.Assert.*;
 

@@ -1,5 +1,6 @@
 package project1;
 
+import project1.data.SimulationConfig;
 import project1.listeners.BreedingSystem;
 import project1.listeners.FeedingSystem;
 import project1.tick.CollisionSystem;
@@ -17,6 +18,11 @@ public class Simulation {
 
     private World world = new World();
     private List<TickListener> listeners = new ArrayList<>();
+    private final SimulationConfig config;
+
+    public Simulation(SimulationConfig config) {
+        this.config = config;
+    }
 
     public World getWorld() {
         return this.world;
@@ -38,17 +44,42 @@ public class Simulation {
                 .orElse(null);
     }
 
-    public static Simulation createDefault() {
-        Simulation simulation = new Simulation();
-        simulation.addTickListeners(new SpawnSystem());
-        simulation.addTickListeners(new MoveSystem());
-        simulation.addTickListeners(new DeathSystem());
-        simulation.addTickListeners(new StatisticsSystem());
-        CollisionSystem collisionSystem = new CollisionSystem();
-        collisionSystem.addCollisionListener(new BreedingSystem());
-        collisionSystem.addCollisionListener(new FeedingSystem());
-        simulation.addTickListeners(collisionSystem);
+    public SimulationConfig getConfig() {
+        return config;
+    }
 
+    public static Simulation create(SimulationConfig config) {
+        Simulation simulation = new Simulation(config);
+
+        if (config.isSpawnSystemOn()) {
+            simulation.addTickListeners(new SpawnSystem());
+        }
+
+        if (config.isMoveSystemOn()) {
+            simulation.addTickListeners(new MoveSystem());
+        }
+
+        if (config.isDeathSystemOn()) {
+            simulation.addTickListeners(new DeathSystem());
+        }
+
+        if (config.isStatisticsSystemOn()) {
+            simulation.addTickListeners(new StatisticsSystem());
+        }
+
+        if (config.isBreedingSystemOn() || config.isFeedingSystemOn()) {
+            CollisionSystem collisionSystem = new CollisionSystem();
+
+            if (config.isBreedingSystemOn()) {
+                collisionSystem.addCollisionListener(new BreedingSystem());
+            }
+
+            if (config.isFeedingSystemOn()) {
+                collisionSystem.addCollisionListener(new FeedingSystem());
+            }
+
+            simulation.addTickListeners(collisionSystem);
+        }
 
         return simulation;
     }

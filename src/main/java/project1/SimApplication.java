@@ -3,22 +3,18 @@ package project1;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.*;
-import glm_.vec2.Vec2;
 import glm_.vec2.Vec2i;
 import imgui.ImGui;
 import imgui.classes.Context;
 import imgui.impl.gl.ImplGL3;
 import imgui.impl.glfw.ImplGlfw;
-import project1.actors.Animal;
-import project1.actors.Bush;
+import project1.data.SimulationConfig;
 import project1.gui.ImGuiLibGdxTranslator;
+import project1.gui.SimulationConfigWidget;
 import project1.gui.SimulationWidget;
-import project1.gui.WorldWidget;
-import project1.visitors.StatisticsSystem;
 import uno.glfw.GlfwWindow;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -32,6 +28,7 @@ public class SimApplication extends ApplicationAdapter {
     private Context context;
 
     private List<SimulationWidget> simulationWidgets = new ArrayList<>();
+    private SimulationConfigWidget configWidget = new SimulationConfigWidget();
 
     private int simulationIdx = 0;
 
@@ -71,12 +68,10 @@ public class SimApplication extends ApplicationAdapter {
         if (ui.beginMainMenuBar()) {
             if (ui.beginMenu("Simulation", true)) {
                 if (ui.menuItem("New", "", false, true)) {
-                    simulationWidgets.add(new SimulationWidget(simulationIdx));
-
-                    simulationIdx += 1;
+                    configWidget.open();
                 }
 
-                if (ui.beginMenu("Kill", true)) {
+                if (ui.beginMenu("Kill", simulationWidgets.size() > 0)) {
                     simulationWidgets.removeIf(simulationWidget -> ui
                             .menuItem("Simulation #" + simulationWidget .getSimulationIdx(),
                                       "", false, true));
@@ -96,6 +91,13 @@ public class SimApplication extends ApplicationAdapter {
 
         for (SimulationWidget simulationWidget : simulationWidgets) {
             simulationWidget.render(ui);
+        }
+
+        configWidget.render(ui);
+        SimulationConfig config = configWidget.popConfig();
+        if (config != null) {
+            simulationWidgets.add(new SimulationWidget(simulationIdx, Simulation.create(config)));
+            simulationIdx += 1;
         }
 
         ui.render();

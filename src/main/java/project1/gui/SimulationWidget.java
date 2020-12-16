@@ -16,7 +16,7 @@ import project1.world.World;
 import java.util.Random;
 
 public class SimulationWidget implements Widget {
-    private Simulation simulation = Simulation.createDefault();
+    private Simulation simulation;
     private WorldWidget worldWidget;
     private AddActorWidget addActorWidget = new AddActorWidget();
     private KMutableProperty0<Integer> amount = new MutableProperty0<>(100);
@@ -34,7 +34,8 @@ public class SimulationWidget implements Widget {
     private float[] deathHist = new float[30];
     private float[] spawnHist = new float[30];
 
-    public SimulationWidget(int simulationIdx) {
+    public SimulationWidget(int simulationIdx, Simulation simulation) {
+        this.simulation = simulation;
         this.simulationIdx = simulationIdx;
         this.worldWidget = new WorldWidget(simulation.getWorld(), simulationIdx,
                                            this, addActorWidget);
@@ -78,8 +79,6 @@ public class SimulationWidget implements Widget {
         }
 
         if (ui.collapsingHeader("Statistics", 0)) {
-            ui.text("Epoch: %d", statisticsSystem.getEpoch());
-            ui.text("Alive: %d", statisticsSystem.getAliveCount());
 
             Vec2 graphSize = new Vec2(200, 50);
 
@@ -91,16 +90,29 @@ public class SimulationWidget implements Widget {
                 spawnScaleMax = (int) Math.max(spawnScaleMax, spawnHist[i]);
             }
 
-            ui.plotLines("Alive", aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
+            String text;
+            int value;
 
-            ui.text("Children: %d", statisticsSystem.getChildrenSum());
-            ui.plotLines("Children", childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
 
-            ui.text("Death: %d", deathSystem.getDeathCount());
-            ui.plotLines("Death", deathHist, 0, "", 0, deathScaleMax, graphSize, 1);
+            value = statisticsSystem != null ? statisticsSystem.getEpoch() : -1;
+            ui.text("Epoch: %d", value);
 
-            ui.text("Spawned bushes: %d", spawnSystem.getBushCount());
-            ui.plotLines("Spawned bushes", spawnHist, 0, "", 0, spawnScaleMax, graphSize, 1);
+            value = statisticsSystem != null ? statisticsSystem.getAliveCount() : -1;
+            text = String.format("Alive: %d", value);
+            ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
+
+
+            value = statisticsSystem != null ? statisticsSystem.getChildrenSum() : -1;
+            text = String.format("Children: %d", value);
+            ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
+
+            value = deathSystem != null ? deathSystem.getDeathCount() : -1;
+            text = String.format("Death: %d", value);
+            ui.plotLines(text, deathHist, 0, "", 0, deathScaleMax, graphSize, 1);
+
+            value = spawnSystem != null ? spawnSystem.getBushCount() : -1;
+            text = String.format("Spawned bushes: %d", value);
+            ui.plotLines(text, spawnHist, 0, "", 0, spawnScaleMax, graphSize, 1);
         }
 
         if (ui.collapsingHeader("Actors", 0)) {
@@ -175,17 +187,23 @@ public class SimulationWidget implements Widget {
                 this.simulation.tick();
                 time = 0.0f;
 
-                System.arraycopy(aliveHist, 1, aliveHist, 0, aliveHist.length - 1);
-                aliveHist[aliveHist.length - 1] = statisticsSystem.getAliveCount();
+                if (statisticsSystem != null) {
+                    System.arraycopy(aliveHist, 1, aliveHist, 0, aliveHist.length - 1);
+                    aliveHist[aliveHist.length - 1] = statisticsSystem.getAliveCount();
 
-                System.arraycopy(childrenHist, 1, childrenHist, 0, childrenHist.length - 1);
-                childrenHist[childrenHist.length - 1] = statisticsSystem.getChildrenSum();
+                    System.arraycopy(childrenHist, 1, childrenHist, 0, childrenHist.length - 1);
+                    childrenHist[childrenHist.length - 1] = statisticsSystem.getChildrenSum();
+                }
 
-                System.arraycopy(deathHist, 1, deathHist, 0, deathHist.length - 1);
-                deathHist[deathHist.length - 1] = deathSystem.getDeathCount();
+                if (deathSystem != null) {
+                    System.arraycopy(deathHist, 1, deathHist, 0, deathHist.length - 1);
+                    deathHist[deathHist.length - 1] = deathSystem.getDeathCount();
+                }
 
-                System.arraycopy(spawnHist, 1, spawnHist, 0, spawnHist.length - 1);
-                spawnHist[spawnHist.length - 1] = spawnSystem.getBushCount();
+                if (spawnSystem != null) {
+                    System.arraycopy(spawnHist, 1, spawnHist, 0, spawnHist.length - 1);
+                    spawnHist[spawnHist.length - 1] = spawnSystem.getBushCount();
+                }
             }
         }
 

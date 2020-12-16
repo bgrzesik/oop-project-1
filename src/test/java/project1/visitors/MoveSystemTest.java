@@ -3,6 +3,7 @@ package project1.visitors;
 import org.junit.Test;
 import project1.Simulation;
 import project1.actors.Animal;
+import project1.data.SimulationConfig;
 import project1.world.World;
 
 import java.util.Arrays;
@@ -13,7 +14,11 @@ public class MoveSystemTest {
 
     @Test
     public void tick() {
-        Simulation simulation = new Simulation();
+        SimulationConfig config = new SimulationConfig.Builder()
+                .noSystems()
+                .build();
+
+        Simulation simulation = new Simulation(config);
         MoveSystem moveSystem = new MoveSystem();
         simulation.addTickListeners(moveSystem);
 

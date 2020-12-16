@@ -4,6 +4,7 @@ import project1.data.Direction;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.WorldActor;
+import project1.data.SimulationConfig;
 import project1.world.Cell;
 import project1.world.World;
 
@@ -14,15 +15,14 @@ import static project1.world.World.SIZE_Y;
 
 public class BreedingSystem implements CollisionListener {
 
-    private static final int MINIMAL_ENERGY_TO_BREED = 20;
-
     @Override
     public void collided(Simulation simulation, Set<WorldActor> actors, Cell cell) {
+        SimulationConfig config = simulation.getConfig();
 
         Iterator<Animal> animals = actors.stream()
                                          .filter(a -> a instanceof Animal)
                                          .map(a -> (Animal) a)
-                                         .filter(a -> a.getEnergy() > MINIMAL_ENERGY_TO_BREED)
+                                         .filter(a -> a.getEnergy() > config.getMinimalBreedEnergy())
                                          .sorted(Comparator.comparingInt(Animal::getEnergy))
                                          .iterator();
 
@@ -35,17 +35,19 @@ public class BreedingSystem implements CollisionListener {
 
             Animal animalB = animals.next();
 
-            breed(simulation.getWorld(), animalA, animalB);
+            breed(simulation, animalA, animalB);
         }
 
     }
 
-    private void breed(World world, Animal animalA, Animal animalB) {
+    private void breed(Simulation simulation, Animal animalA, Animal animalB) {
         Random random = new Random();
 
-        int energy = animalA.getEnergy() / 4 + animalB.getEnergy() / 4;
-        animalA.loseEnergy(animalA.getEnergy() / 4);
-        animalB.loseEnergy(animalB.getEnergy() / 4);
+        float energyPart = simulation.getConfig().getParentEnergyPart();
+
+        int energy = (int) (animalA.getEnergy() * energyPart + animalB.getEnergy() * energyPart);
+        animalA.loseEnergy((int) (animalA.getEnergy() * energyPart));
+        animalB.loseEnergy((int) (animalB.getEnergy() * energyPart));
         animalA.increaseChildren();
         animalB.increaseChildren();
 
@@ -78,7 +80,8 @@ public class BreedingSystem implements CollisionListener {
         Arrays.sort(genes);
 
         Animal child = new Animal(x, y, energy, genes);
-        world.addActor(child);
+        simulation.getWorld()
+                  .addActor(child);
     }
 
 }

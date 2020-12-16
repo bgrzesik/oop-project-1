@@ -8,10 +8,7 @@ import project1.listeners.WorldMoveObserver;
 import project1.visitors.StatisticsSystem;
 import project1.visitors.WorldActorVisitor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class World {
     public static final int SIZE_X = 100;
@@ -19,6 +16,7 @@ public class World {
 
     private Cell[][] cells = new Cell[SIZE_X][SIZE_Y];
     private Set<WorldActor> actors = new HashSet<>();
+    private Set<WorldActor> pendingRemoval;
 
     private WorldDeathListener deathListener;
     private WorldMoveObserver moveObserver;
@@ -50,8 +48,15 @@ public class World {
 
 
     public void removeActor(WorldActor actor) {
-        cells[actor.getX()][actor.getY()].removeActor(actor);
-        actors.remove(actor);
+        synchronized (this) {
+            if (pendingRemoval != null) {
+                pendingRemoval.add(actor);
+                cells[actor.getX()][actor.getY()].removeActor(actor);
+            } else {
+                cells[actor.getX()][actor.getY()].removeActor(actor);
+                actors.remove(actor);
+            }
+        }
     }
 
     public Cell getCell(int x, int y) {
@@ -59,7 +64,16 @@ public class World {
     }
 
     public void accept(WorldActorVisitor visitor) {
-        Set<WorldActor> actors = new HashSet<>(this.actors);
+        synchronized (this) {
+            // Turn on buffering pending removal actors to increase performance
+            pendingRemoval = new HashSet<>();
+        }
+
         actors.forEach(a -> a.accept(visitor));
+
+        synchronized (this) {
+            actors.removeAll(pendingRemoval);
+            pendingRemoval = null;
+        }
     }
 }

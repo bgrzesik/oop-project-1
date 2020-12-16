@@ -3,8 +3,11 @@ package project1;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.*;
+import glm_.vec2.Vec2;
 import glm_.vec2.Vec2i;
+import imgui.Cond;
 import imgui.ImGui;
+import imgui.WindowFlag;
 import imgui.classes.Context;
 import imgui.impl.gl.ImplGL3;
 import imgui.impl.glfw.ImplGlfw;
@@ -72,9 +75,9 @@ public class SimApplication extends ApplicationAdapter {
                 }
 
                 if (ui.beginMenu("Kill", simulationWidgets.size() > 0)) {
-                    simulationWidgets.removeIf(simulationWidget -> ui
-                            .menuItem("Simulation #" + simulationWidget .getSimulationIdx(),
-                                      "", false, true));
+                    simulationWidgets
+                            .removeIf(sim -> ui.menuItem("Simulation #" + sim.getSimulationIdx(),
+                                                         "", false, true));
 
                     ui.endMenu();
                 }
@@ -88,6 +91,18 @@ public class SimApplication extends ApplicationAdapter {
 
             ui.endMainMenuBar();
         }
+
+        int flags = WindowFlag.NoDecoration.i | WindowFlag.NoInputs.i | WindowFlag.AlwaysAutoResize.i |
+                WindowFlag.NoSavedSettings.i | WindowFlag.NoFocusOnAppearing.i | WindowFlag.NoNav.i;
+
+        Vec2i displaySize = ui.getIo().getDisplaySize();
+
+        ui.begin("Application", new boolean[]{true}, flags);
+        ui.setWindowPos(new Vec2(-250, -60).plus(displaySize), Cond.Always);
+        ui.text("FPS: %d", Gdx.graphics.getFramesPerSecond());
+        ui.text("In case of input freeze, alt-tab");
+        ui.end();
+
 
         for (SimulationWidget simulationWidget : simulationWidgets) {
             simulationWidget.render(ui);
@@ -122,10 +137,9 @@ public class SimApplication extends ApplicationAdapter {
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.useOpenGL3(true, 3, 3);
-        config.setWindowedMode(1900, 900);
         config.setIdleFPS(60);
         config.setForegroundFPS(60);
-        config.setWindowPosition(3000, 100);
+        config.setTitle("Evolution simulation");
 
         SimApplication sim = new SimApplication();
 

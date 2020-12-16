@@ -49,8 +49,8 @@ public class World {
                 pendingRemoval.add(actor);
             } else {
                 actors.remove(actor);
+                cells[actor.getX()][actor.getY()].removeActor(actor);
             }
-            cells[actor.getX()][actor.getY()].removeActor(actor);
         }
     }
 

@@ -93,26 +93,22 @@ public class SimulationWidget implements Widget {
             String text;
             int value;
 
-
-            value = statisticsSystem != null ? statisticsSystem.getEpoch() : -1;
-            ui.text("Epoch: %d", value);
-
             value = statisticsSystem != null ? statisticsSystem.getAliveCount() : -1;
             text = String.format("Alive: %d", value);
             ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
-
 
             value = statisticsSystem != null ? statisticsSystem.getChildrenSum() : -1;
             text = String.format("Children: %d", value);
             ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
 
+            value = statisticsSystem != null ? statisticsSystem.getEpoch() : -1;
+            ui.text("Epoch: %d", value);
+
             value = deathSystem != null ? deathSystem.getDeathCount() : -1;
-            text = String.format("Death: %d", value);
-            ui.plotLines(text, deathHist, 0, "", 0, deathScaleMax, graphSize, 1);
+            ui.text("Death: %d", value);
 
             value = spawnSystem != null ? spawnSystem.getBushCount() : -1;
-            text = String.format("Spawned bushes: %d", value);
-            ui.plotLines(text, spawnHist, 0, "", 0, spawnScaleMax, graphSize, 1);
+            ui.text("Spawned bushes: %d", value);
         }
 
         if (ui.collapsingHeader("Actors", 0)) {

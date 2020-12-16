@@ -40,10 +40,6 @@ public class SimulationWidget implements Widget {
         this.simulationIdx = simulationIdx;
         this.worldWidget = new WorldWidget(simulation.getWorld(), simulationIdx,
                                            this, addActorWidget);
-
-        int[] genes = new int[32];
-        Arrays.fill(genes, 0);
-        simulation.getWorld().addActor(new Animal(10, 10, 100, genes));
     }
 
     @Override

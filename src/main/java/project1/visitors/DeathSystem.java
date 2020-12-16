@@ -15,19 +15,17 @@ public class DeathSystem implements WorldActorVisitor, CellTickListener {
     private World world;
     private int deathCount = 0;
 
-    private Set<DeathListener> deathListeners = new HashSet<>();
-
     @Override
     public void visitBush(Bush bush) {
         if (bush.pendingRemoval()) {
-            world.removeActor(bush);
+            bush.kill();
         }
     }
 
     @Override
     public void visitAnimal(Animal animal) {
         if (animal.pendingRemoval()) {
-            world.removeActor(animal);
+            animal.kill();
             deathCount += 1;
         }
     }

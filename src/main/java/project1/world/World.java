@@ -19,7 +19,6 @@ public class World {
     private Set<WorldActor> pendingRemoval;
 
     private WorldDeathListener deathListener;
-    private WorldMoveObserver moveObserver;
 
     public World() {
         for (int x = 0; x < SIZE_X; x++) {
@@ -29,7 +28,6 @@ public class World {
         }
 
         this.deathListener = new WorldDeathListener(this);
-        this.moveObserver = new WorldMoveObserver(this);
     }
 
     public void addActor(WorldActor actor) {
@@ -38,9 +36,7 @@ public class World {
 
         if (actor instanceof MoveObservable) {
             ((MoveObservable) actor)
-                    .addMoveObserver(moveObserver);
-
-            actor.addDeathListener(moveObserver);
+                    .addMoveObserver(new WorldMoveObserver(this, actor));
         }
 
         actor.addDeathListener(deathListener);
@@ -51,11 +47,10 @@ public class World {
         synchronized (this) {
             if (pendingRemoval != null) {
                 pendingRemoval.add(actor);
-                cells[actor.getX()][actor.getY()].removeActor(actor);
             } else {
-                cells[actor.getX()][actor.getY()].removeActor(actor);
                 actors.remove(actor);
             }
+            cells[actor.getX()][actor.getY()].removeActor(actor);
         }
     }
 
@@ -72,6 +67,9 @@ public class World {
         actors.forEach(a -> a.accept(visitor));
 
         synchronized (this) {
+            for (WorldActor actor : pendingRemoval) {
+                cells[actor.getX()][actor.getY()].removeActor(actor);
+            }
             actors.removeAll(pendingRemoval);
             pendingRemoval = null;
         }

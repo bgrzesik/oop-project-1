@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Cell {
-    private Set<WorldActor> actors = new HashSet<>();
+    private final Set<WorldActor> actors = new HashSet<>();
 
     public void addActor(WorldActor actor) {
         this.actors.add(actor);

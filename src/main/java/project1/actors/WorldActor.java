@@ -11,6 +11,8 @@ public interface WorldActor {
 
     void addDeathListener(DeathListener listener);
 
+    void removeDeathListener(DeathListener listener);
+
     int getX();
 
     int getY();

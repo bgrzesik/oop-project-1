@@ -24,6 +24,11 @@ public abstract class AbstractWorldActor implements WorldActor {
     }
 
     @Override
+    public void removeDeathListener(DeathListener listener) {
+        deathListeners.remove(listener);
+    }
+
+    @Override
     public boolean pendingRemoval() {
         return energy <= 0;
     }
@@ -52,5 +57,10 @@ public abstract class AbstractWorldActor implements WorldActor {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void kill() {
+        deathListeners.forEach(l -> l.dead(this));
+        deathListeners.clear();
     }
 }

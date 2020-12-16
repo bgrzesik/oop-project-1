@@ -15,7 +15,6 @@ import static project1.world.World.SIZE_Y;
 public class BreedingSystem implements CollisionListener {
 
     private static final int MINIMAL_ENERGY_TO_BREED = 20;
-    private int born = 0;
 
     @Override
     public void collided(Simulation simulation, Set<WorldActor> actors, Cell cell) {

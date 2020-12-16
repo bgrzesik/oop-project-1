@@ -33,8 +33,10 @@ public class SimulationConfigWidget implements Widget {
             return;
         }
 
-        if (ui.begin("This a bug and popup needs parent window", (KMutableProperty0<Boolean>) null, 0)) {
-            ui.setWindowPos(new Vec2(10000, 10000), Cond.Always);
+        if (ui.begin("This a bug and popup needs parent window", (KMutableProperty0<Boolean>) null, WindowFlag.NoDecoration.i)) {
+            ui.setWindowPos(new Vec2(Integer.MAX_VALUE, Integer.MAX_VALUE), Cond.Always);
+            ui.setWindowSize(new Vec2(0, 0), Cond.Always);
+
             if (!calledOpen) {
                 ui.openPopup(ID, PopupFlag.None.i);
                 calledOpen = true;
@@ -42,12 +44,18 @@ public class SimulationConfigWidget implements Widget {
 
             if (ui.beginPopupModal(ID, (KMutableProperty0<Boolean>) null, WindowFlag.AlwaysAutoResize.i)) {
                 ui.text("Parameters");
-                ui.inputInt("Minimal energy required to breed", minimalBreedEnergy, 1, 10, 0);
-                ui.inputInt("Energy that bush spawns with", spawnBushEnergy, 1, 10, 0);
-                ui.inputInt("Amount of bushes that spawn in jungle every cycle", spawnInJungle, 1, 10, 0);
-                ui.inputInt("Amount of bushes that spawn outside jungle every cycle", spawnOutsideJungle, 1, 10, 0);
-                ui.inputInt("Energy that animal consume when moving", moveEnergy, 1, 10, 0);
-                ui.inputFloat("A part of energy that parent gives to child", parentEnergyPart, 0.01f, 0.1f, "%.3f", 0);
+
+                inputInt(ui, "Minimal energy required to breed", minimalBreedEnergy);
+                inputInt(ui, "Energy that bush spawns with", spawnBushEnergy);
+                inputInt(ui, "Amount of bushes that spawn in jungle every cycle", spawnInJungle);
+                inputInt(ui, "Amount of bushes that spawn outside jungle every cycle", spawnOutsideJungle);
+                inputInt(ui, "Energy that animal consume when moving", moveEnergy);
+
+                try {
+                    ui.inputFloat("A part of energy that parent gives to child", parentEnergyPart, 0.01f, 0.1f, "%.3f", 0);
+                } catch (StringIndexOutOfBoundsException ignored) {
+                    parentEnergyPart.set(0.0f);
+                }
 
                 ui.separator();
 
@@ -94,6 +102,14 @@ public class SimulationConfigWidget implements Widget {
                 ui.endPopup();
             }
             ui.end();
+        }
+    }
+
+    private void inputInt(ImGui ui, String label, KMutableProperty0<Integer> property) {
+        try {
+            ui.inputInt(label, property, 1, 10, 0);
+        } catch (StringIndexOutOfBoundsException ignored) {
+            property.set(0);
         }
     }
 

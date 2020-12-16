@@ -1,4 +1,4 @@
-package project1;
+package project1.data;
 
 public enum Direction {
     N(0, 1),

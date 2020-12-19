@@ -1,13 +1,15 @@
 package project1.data;
 
-import org.apache.maven.model.Build;
-
 public class SimulationConfig {
     private int minimalBreedEnergy = 20;
     private int spawnBushEnergy = 10;
     private int spawnInJungle = 1;
     private int spawnOutsideJungle = 1;
     private int moveEnergy = 1;
+    private int worldWidth = 100;
+    private int worldHeight = 30;
+    private int jungleWidth = 10;
+    private int jungleHeight = 10;
     private float parentEnergyPart = 0.25f;
 
     private boolean spawnSystemOn = true;
@@ -38,6 +40,22 @@ public class SimulationConfig {
 
     public int getSpawnOutsideJungle() {
         return spawnOutsideJungle;
+    }
+
+    public int getWorldWidth() {
+        return worldWidth;
+    }
+
+    public int getWorldHeight() {
+        return worldHeight;
+    }
+
+    public int getJungleWidth() {
+        return jungleWidth;
+    }
+
+    public int getJungleHeight() {
+        return jungleHeight;
     }
 
     public float getParentEnergyPart() {
@@ -128,6 +146,26 @@ public class SimulationConfig {
 
         public Builder setStatisticsSystemOn(boolean statisticsSystemOn) {
             this.config.statisticsSystemOn = statisticsSystemOn;
+            return this;
+        }
+
+        public Builder setWorldWidth(int worldWidth) {
+            this.config.worldWidth = worldWidth;
+            return this;
+        }
+
+        public Builder setWorldHeight(int worldHeight) {
+            this.config.worldHeight = worldHeight;
+            return this;
+        }
+
+        public Builder setJungleWidth(int jungleWidth) {
+            this.config.jungleWidth = jungleWidth;
+            return this;
+        }
+
+        public Builder setJungleHeight(int jungleHeight) {
+            this.config.jungleHeight = jungleHeight;
             return this;
         }
 

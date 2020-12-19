@@ -38,7 +38,7 @@ public class SimulationWidget implements Widget {
     public SimulationWidget(int simulationIdx, Simulation simulation) {
         this.simulation = simulation;
         this.simulationIdx = simulationIdx;
-        this.worldWidget = new WorldWidget(simulation.getWorld(), simulationIdx,
+        this.worldWidget = new WorldWidget(simulation, simulationIdx,
                                            this, addActorWidget);
     }
 
@@ -142,24 +142,23 @@ public class SimulationWidget implements Widget {
             Random random = new Random();
 
             addActorWidget.render(ui);
+            World world = simulation.getWorld();
             switch (addActorWidget.getAddType()) {
                 case AddActorWidget.ADD_ANIMAL:
                     for (int i = 0; i < amount.get(); i++) {
-                        int x = random.nextInt(World.SIZE_X);
-                        int y = random.nextInt(World.SIZE_Y);
+                        int x = random.nextInt(world.getWidth());
+                        int y = random.nextInt(world.getHeight());
                         Animal animal = new Animal(x, y, addActorWidget
                                 .getEnergy(), addActorWidget.getGenes());
-                        simulation.getWorld()
-                                  .addActor(animal);
+                        world.addActor(animal);
                     }
                     break;
                 case AddActorWidget.ADD_BUSH:
                     for (int i = 0; i < amount.get(); i++) {
-                        int x = random.nextInt(World.SIZE_X);
-                        int y = random.nextInt(World.SIZE_Y);
+                        int x = random.nextInt(world.getWidth());
+                        int y = random.nextInt(world.getHeight());
                         Bush animal = new Bush(x, y, addActorWidget.getEnergy());
-                        simulation.getWorld()
-                                  .addActor(animal);
+                        world.addActor(animal);
                     }
                     break;
                 default:
@@ -197,9 +196,11 @@ public class SimulationWidget implements Widget {
                     System.arraycopy(bushHist, 1, bushHist, 0, bushHist.length - 1);
                     bushHist[bushHist.length - 1] = statisticsSystem.getPresentBushCount();
 
-                if (spawnSystem != null) {
-                    System.arraycopy(spawnHist, 1, spawnHist, 0, spawnHist.length - 1);
-                    spawnHist[spawnHist.length - 1] = spawnSystem.getBushCount();
+                    System.arraycopy(energyHist, 1, energyHist, 0, energyHist.length - 1);
+                    energyHist[energyHist.length - 1] = statisticsSystem.getEnergyAverage();
+
+                    System.arraycopy(ageHist, 1, ageHist, 0, ageHist.length - 1);
+                    ageHist[ageHist.length - 1] = statisticsSystem.getAgeAverage();
                 }
             }
         }

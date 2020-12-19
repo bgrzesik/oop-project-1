@@ -7,14 +7,14 @@ import imgui.*;
 import imgui.classes.DrawList;
 import imgui.internal.sections.ButtonFlag;
 import kotlin.reflect.KMutableProperty0;
+import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
+import project1.data.SimulationConfig;
 import project1.visitors.WorldActorVisitorAdapter;
 import project1.world.World;
 
 import static project1.tick.SpawnSystem.*;
-import static project1.world.World.SIZE_X;
-import static project1.world.World.SIZE_Y;
 
 public class WorldWidget implements Widget {
 //    public static final int ANIMAL_COLOR = 0xff1111ee;
@@ -30,27 +30,30 @@ public class WorldWidget implements Widget {
     public Texture animalTexture;
     public Texture bushTexture;
 
-    private World world;
-    private int simulationIdx;
+    private final World world;
+    private final int simulationIdx;
+    private final SimulationConfig config;
 
-    private CellDetailsWidget detailsWidget;
-    private SimulationWidget simulationWidget;
-    private AddActorWidget addActorWidget;
+    private final CellDetailsWidget detailsWidget;
+    private final SimulationWidget simulationWidget;
+    private final AddActorWidget addActorWidget;
     private float cellSize = 18;
     private Vec2 drag = new Vec2(0, 0);
 
-    public WorldWidget(World world, int simulationIdx,
+    public WorldWidget(Simulation simulation, int simulationIdx,
                        SimulationWidget simulationWidget,
                        AddActorWidget addActorWidget) {
 
-        this.world = world;
+        this.config = simulation.getConfig();
+        this.world = simulation.getWorld();
         this.simulationIdx = simulationIdx;
         this.simulationWidget = simulationWidget;
         this.addActorWidget = addActorWidget;
-        detailsWidget = new CellDetailsWidget(world, simulationIdx);
 
-        animalTexture = new Texture(Gdx.files.internal("Animal2.png"));
-        bushTexture = new Texture(Gdx.files.internal("Bush2.png"));
+        this.detailsWidget = new CellDetailsWidget(world, simulationIdx);
+
+        this.animalTexture = new Texture(Gdx.files.internal("Animal2.png"));
+        this.bushTexture = new Texture(Gdx.files.internal("Bush2.png"));
     }
 
 
@@ -59,9 +62,9 @@ public class WorldWidget implements Widget {
         ui.begin("World #" + simulationIdx, (KMutableProperty0<Boolean>) null,
                  WindowFlag.HorizontalScrollbar.i | WindowFlag.NoNavInputs.i);
 
-        Vec2 size = new Vec2(SIZE_X, World.SIZE_Y).times(cellSize);
+        Vec2 size = new Vec2(world.getWidth(), world.getHeight()).times(cellSize);
 
-        ui.setWindowPos(new Vec2(30, 120), Cond.Once);
+//        ui.setWindowPos(new Vec2(30, 120), Cond.Once);
         ui.setWindowSize(size.plus(30, 60), Cond.Once);
         DrawList drawList = ui.getWindowDrawList();
 
@@ -70,9 +73,12 @@ public class WorldWidget implements Widget {
         drawList.addRectFilled(pos, pos.plus(size),
                                WORLD_COLOR, 0, 0);
 
-        drawList.addRectFilled(pos.plus(new Vec2(JUNGLE_LEFT, 30 - JUNGLE_TOP)
+        int left = config.getWorldWidth() / 2 - config.getJungleWidth() / 2;
+        int bottom = config.getWorldHeight() / 2 - config.getJungleHeight() / 2;
+
+        drawList.addRectFilled(pos.plus(new Vec2(left, bottom)
                                                 .times(cellSize)),
-                               pos.plus(new Vec2(JUNGLE_RIGHT, 30 - JUNGLE_BOTTOM)
+                               pos.plus(new Vec2(left + config.getJungleWidth(), bottom + config.getJungleHeight())
                                                 .times(cellSize)),
                                JUNGLE_COLOR, 0, 0);
 
@@ -99,9 +105,9 @@ public class WorldWidget implements Widget {
 
         Vec2 cell = ui.getMousePos().minus(pos).div(cellSize);
         int x = (int) Math.floor(cell.getX());
-        int y = (int) Math.floor(30 - cell.getY());
+        int y = (int) Math.floor(world.getHeight() - cell.getY());
 
-        if (x >= 0 && x < SIZE_X && y >= 0 && y < SIZE_Y) {
+        if (x >= 0 && x < world.getWidth() && y >= 0 && y < world.getHeight()) {
             if (ui.isItemActive()) {
                 if (ui.isMouseClicked(MouseButton.Left, false)) {
                     switch (simulationWidget.getQuickAdd()) {
@@ -139,15 +145,15 @@ public class WorldWidget implements Widget {
     }
 
     private void drawGridLines(DrawList drawList, Vec2 pos) {
-        for (int x = 0; x < SIZE_X; x++) {
+        for (int x = 0; x < world.getWidth(); x++) {
             drawList.addLine(pos.plus(x * cellSize, 0),
-                             pos.plus(x * cellSize, cellSize * SIZE_Y),
+                             pos.plus(x * cellSize, cellSize * world.getHeight()),
                              LINE_COLOR, 0.1f);
 
         }
-        for (int y = 0; y < SIZE_Y; y++) {
+        for (int y = 0; y < world.getHeight(); y++) {
             drawList.addLine(pos.plus(0, y * cellSize),
-                             pos.plus(SIZE_X * cellSize, y * cellSize),
+                             pos.plus(world.getWidth() * cellSize, y * cellSize),
                              LINE_COLOR, 0.1f);
 
         }
@@ -155,44 +161,15 @@ public class WorldWidget implements Widget {
 
     public void drawBush(DrawList drawList, Vec2 pos, int x, int y) {
         drawTexture(drawList, pos, x, y, bushTexture);
-//        y = 29 - y;
-//
-//        pos = pos.plus(new Vec2(x, y).times(cellSize));
-//        drawList.addTriangleFilled(pos.plus(0, cellSize),
-//                                   pos.plus(cellSize, cellSize),
-//                                   pos.plus(cellSize / 2.0f, 0),
-//                                   BUSH_COLOR);
-//
-//        drawList.addTriangleFilled(pos.plus(0, cellSize / 2.0f),
-//                                   pos.plus(cellSize, cellSize / 2.0f),
-//                                   pos.plus(cellSize / 2.0f, 0),
-//                                   BUSH_COLOR);
 
     }
 
     public void drawAnimal(DrawList drawList, Vec2 pos, int x, int y) {
         drawTexture(drawList, pos, x, y, animalTexture);
-//        y = 29 - y;
-//        pos = pos.plus(new Vec2(x, y).times(cellSize));
-//
-//        drawList.addCircleFilled(pos.plus(cellSize / 2.0f, 2.0f * cellSize / 8.0f),
-//                                 cellSize / 6.0f, ANIMAL_COLOR, 30);
-//
-//        drawList.addCircleFilled(pos.plus(cellSize / 2.0f, cellSize / 2.0f),
-//                                 cellSize / 6.0f, ANIMAL_COLOR, 30);
-//
-//
-//        drawList.addLine(pos.plus(6.0f * cellSize / 8.0f, cellSize / 8.0f),
-//                         pos.plus(2.0f * cellSize / 8.0f, 7.0f * cellSize / 8.0f),
-//                         ANIMAL_COLOR, 2.0f);
-//
-//        drawList.addLine(pos.plus(2.0f * cellSize / 8.0f, cellSize / 8.0f),
-//                         pos.plus(6.0f * cellSize / 8.0f, 7.0f * cellSize / 8.0f),
-//                         ANIMAL_COLOR, 2.0f);
     }
 
     public void drawTexture(DrawList drawList, Vec2 pos, int x, int y, Texture texture) {
-        y = 29 - y;
+        y = world.getHeight() - y - 1;
         pos = pos.plus(new Vec2(x, y).times(cellSize));
 
         drawList.addImage(texture.getTextureObjectHandle(),

@@ -10,9 +10,6 @@ import project1.world.World;
 
 import java.util.*;
 
-import static project1.world.World.SIZE_X;
-import static project1.world.World.SIZE_Y;
-
 public class BreedingSystem implements CollisionListener {
 
     @Override
@@ -41,6 +38,8 @@ public class BreedingSystem implements CollisionListener {
     }
 
     private void breed(Simulation simulation, Animal animalA, Animal animalB) {
+        World world = simulation.getWorld();
+
         Random random = new Random();
 
         float energyPart = simulation.getConfig().getParentEnergyPart();
@@ -53,8 +52,8 @@ public class BreedingSystem implements CollisionListener {
 
         Direction direction = Direction.values()[random.nextInt(Direction.values().length)];
 
-        int x = (animalA.getX() + direction.getOffsetX() + SIZE_X) % SIZE_X;
-        int y = (animalA.getY() + direction.getOffsetY() + SIZE_Y) % SIZE_Y;
+        int x = (animalA.getX() + direction.getOffsetX() + world.getWidth()) % world.getWidth();
+        int y = (animalA.getY() + direction.getOffsetY() + world.getHeight()) % world.getHeight();
 
         int split0 = random.nextInt(32);
         int split1;
@@ -80,8 +79,8 @@ public class BreedingSystem implements CollisionListener {
         Arrays.sort(genes);
 
         Animal child = new Animal(x, y, energy, genes);
-        simulation.getWorld()
-                  .addActor(child);
+        child.rotate(random.nextInt(Direction.values().length));
+        world.addActor(child);
     }
 
 }

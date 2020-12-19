@@ -12,6 +12,7 @@ import java.util.Random;
 public class MoveSystem implements WorldActorVisitor, TickListener {
     private Random random = new Random(42);
     private Simulation simulation;
+    private World world;
 
     @Override
     public void visitBush(Bush bush) {
@@ -24,8 +25,8 @@ public class MoveSystem implements WorldActorVisitor, TickListener {
 
         Direction direction = animal.getDirection();
 
-        int x = (World.SIZE_X + animal.getX() + direction.getOffsetX()) % World.SIZE_X;
-        int y = (World.SIZE_Y + animal.getY() + direction.getOffsetY()) % World.SIZE_Y;
+        int x = (world.getWidth() + animal.getX() + direction.getOffsetX()) % world.getWidth();
+        int y = (world.getHeight() + animal.getY() + direction.getOffsetY()) % world.getHeight();
 
         int moveEnergy = simulation.getConfig()
                                    .getMoveEnergy();
@@ -37,9 +38,8 @@ public class MoveSystem implements WorldActorVisitor, TickListener {
     @Override
     public void tick(Simulation simulation) {
         this.simulation = simulation;
-
-        World world = simulation.getWorld();
-        world.accept(this);
+        this.world = simulation.getWorld();
+        this.world.accept(this);
     }
 
 }

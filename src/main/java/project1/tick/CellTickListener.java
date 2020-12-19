@@ -11,8 +11,8 @@ public interface CellTickListener extends TickListener {
     @Override
     default void tick(Simulation simulation) {
         World world = simulation.getWorld();
-        for (int x = 0; x < World.SIZE_X; x++) {
-            for (int y = 0; y < World.SIZE_Y; y++) {
+        for (int x = 0; x < world.getWidth(); x++) {
+            for (int y = 0; y < world.getHeight(); y++) {
                 Cell cell = world.getCell(x, y);
                 this.tick(simulation, cell);
             }

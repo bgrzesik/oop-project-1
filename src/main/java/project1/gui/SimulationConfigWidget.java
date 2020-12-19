@@ -6,8 +6,13 @@ import kotlin.reflect.KMutableProperty0;
 import project1.data.SimulationConfig;
 
 public class SimulationConfigWidget implements Widget {
+    private final KMutableProperty0<Integer> worldWidth = new MutableProperty0<>(100);
+    private final KMutableProperty0<Integer> worldHeight = new MutableProperty0<>(30);
+    private final KMutableProperty0<Integer> jungleWidth = new MutableProperty0<>(10);
+    private final KMutableProperty0<Integer> jungleHeight = new MutableProperty0<>(10);
+
     private final KMutableProperty0<Integer> minimalBreedEnergy = new MutableProperty0<>(20);
-    private final KMutableProperty0<Integer> spawnBushEnergy = new MutableProperty0<>(10);
+    private final KMutableProperty0<Integer> spawnBushEnergy = new MutableProperty0<>(60);
     private final KMutableProperty0<Integer> spawnInJungle = new MutableProperty0<>(1);
     private final KMutableProperty0<Integer> spawnOutsideJungle = new MutableProperty0<>(1);
     private final KMutableProperty0<Integer> moveEnergy = new MutableProperty0<>(1);
@@ -45,6 +50,12 @@ public class SimulationConfigWidget implements Widget {
             if (ui.beginPopupModal(ID, (KMutableProperty0<Boolean>) null, WindowFlag.AlwaysAutoResize.i)) {
                 ui.text("Parameters");
 
+                inputInt(ui, "World width", worldWidth);
+                inputInt(ui, "World height", worldHeight);
+
+                inputInt(ui, "Jungle width", jungleWidth);
+                inputInt(ui, "Jungle height", jungleHeight);
+
                 inputInt(ui, "Minimal energy required to breed", minimalBreedEnergy);
                 inputInt(ui, "Energy that bush spawns with", spawnBushEnergy);
                 inputInt(ui, "Amount of bushes that spawn in jungle every cycle", spawnInJungle);
@@ -78,12 +89,18 @@ public class SimulationConfigWidget implements Widget {
                     ui.closeCurrentPopup();
 
                     this.pendingConfig = new SimulationConfig.Builder()
+                            .setWorldWidth(worldWidth.get())
+                            .setWorldHeight(worldHeight.get())
+                            .setJungleWidth(jungleWidth.get())
+                            .setJungleHeight(jungleHeight.get())
+
                             .setMinimalBreedEnergy(minimalBreedEnergy.get())
                             .setSpawnBushEnergy(spawnBushEnergy.get())
                             .setSpawnInJungle(spawnInJungle.get())
                             .setSpawnOutsideJungle(spawnOutsideJungle.get())
                             .setMoveEnergy(moveEnergy.get())
                             .setParentEnergyPart(parentEnergyPart.get())
+
                             .setSpawnSystemOn(spawnSystemOn.get())
                             .setMoveSystemOn(moveSystemOn.get())
                             .setDeathSystemOn(deathSystemOn.get())

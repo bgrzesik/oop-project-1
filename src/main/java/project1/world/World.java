@@ -11,23 +11,26 @@ import project1.visitors.WorldActorVisitor;
 import java.util.*;
 
 public class World {
-    public static final int SIZE_X = 100;
-    public static final int SIZE_Y = 30;
+    private final int width;
+    private final int height;
 
-    private Cell[][] cells = new Cell[SIZE_X][SIZE_Y];
-    private Set<WorldActor> actors = new HashSet<>();
+    private final Cell[][] cells;
+    private final Set<WorldActor> actors = new HashSet<>();
     private Set<WorldActor> pendingRemoval;
 
     private WorldDeathListener deathListener;
 
-    public World() {
-        for (int x = 0; x < SIZE_X; x++) {
-            for (int y = 0; y < SIZE_Y; y++) {
-                cells[x][y] = new Cell();
+    public World(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.deathListener = new WorldDeathListener(this);
+        this.cells = new Cell[width][height];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                this.cells[x][y] = new Cell();
             }
         }
-
-        this.deathListener = new WorldDeathListener(this);
     }
 
     public void addActor(WorldActor actor) {
@@ -56,6 +59,14 @@ public class World {
 
     public Cell getCell(int x, int y) {
         return this.cells[x][y];
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public void accept(WorldActorVisitor visitor) {

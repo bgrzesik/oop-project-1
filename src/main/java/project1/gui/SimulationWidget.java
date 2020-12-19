@@ -31,8 +31,9 @@ public class SimulationWidget implements Widget {
 
     private float[] aliveHist = new float[30];
     private float[] childrenHist = new float[30];
-    private float[] deathHist = new float[30];
-    private float[] spawnHist = new float[30];
+    private float[] bushHist = new float[30];
+    private float[] energyHist = new float[30];
+    private float[] ageHist = new float[30];
 
     public SimulationWidget(int simulationIdx, Simulation simulation) {
         this.simulation = simulation;
@@ -51,7 +52,7 @@ public class SimulationWidget implements Widget {
                 .getTickListener(SpawnSystem.class);
 
         ui.begin("Simulation #" + simulationIdx, new boolean[]{false}, 0);
-        ui.setWindowSize(new Vec2(400, 550), Cond.Once);
+        ui.setWindowSize(new Vec2(700, 950), Cond.Once);
 
         ui.checkbox("Show lines", showLines);
 
@@ -82,24 +83,36 @@ public class SimulationWidget implements Widget {
 
             Vec2 graphSize = new Vec2(200, 50);
 
-            int aliveScaleMax = 10, childrenScaleMax = 10, deathScaleMax = 10, spawnScaleMax = 10;
+            int aliveScaleMax = 3, childrenScaleMax = 3, bushScaleMax = 3, energyScaleMax = 3;
             for (int i = 0; i < aliveHist.length; i++) {
                 aliveScaleMax = (int) Math.max(aliveScaleMax, aliveHist[i]);
                 childrenScaleMax = (int) Math.max(childrenScaleMax, childrenHist[i]);
-                deathScaleMax = (int) Math.max(deathScaleMax, deathHist[i]);
-                spawnScaleMax = (int) Math.max(spawnScaleMax, spawnHist[i]);
+                bushScaleMax = (int) Math.max(bushScaleMax, bushHist[i]);
+                energyScaleMax = (int) Math.max(energyScaleMax, energyHist[i]);
             }
 
             String text;
             int value;
 
-            value = statisticsSystem != null ? statisticsSystem.getAliveCount() : -1;
+            value = statisticsSystem != null ? statisticsSystem.getAliveAnimalsCount() : -1;
             text = String.format("Alive: %d", value);
             ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
 
-            value = statisticsSystem != null ? statisticsSystem.getChildrenSum() : -1;
-            text = String.format("Children: %d", value);
+            value = statisticsSystem != null ? statisticsSystem.getPresentBushCount() : -1;
+            text = String.format("Bush: %d", value);
+            ui.plotLines(text, bushHist, 0, "", 0, bushScaleMax, graphSize, 1);
+
+            float valuef = statisticsSystem != null ? statisticsSystem.getChildrenAverage() : -1;
+            text = String.format("Children: %.2f", valuef);
             ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
+
+            valuef = statisticsSystem != null ? statisticsSystem.getAgeAverage() : -1;
+            text = String.format("Age: %.2f", valuef);
+            ui.plotLines(text, ageHist, 0, "", 40, childrenScaleMax, graphSize, 1);
+
+            valuef = statisticsSystem != null ? statisticsSystem.getEnergyAverage() : -1.0f;
+            text = String.format("Energy: %.2f", valuef);
+            ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
 
             value = statisticsSystem != null ? statisticsSystem.getEpoch() : -1;
             ui.text("Epoch: %d", value);
@@ -108,25 +121,16 @@ public class SimulationWidget implements Widget {
             ui.text("Death: %d", value);
 
             value = spawnSystem != null ? spawnSystem.getBushCount() : -1;
-            ui.text("Spawned bushes: %d", value);
-        }
+            ui.text("Bushes total: %d", value);
 
-        if (ui.collapsingHeader("Actors", 0)) {
-            simulation
-                    .getWorld()
-                    .accept(new WorldActorVisitor() {
-                        @Override
-                        public void visitBush(Bush bush) {
-                            ActorDetailsWidget.showActorDetails(ui, simulation.getWorld(),
-                                                                bush, false);
-                        }
-
-                        @Override
-                        public void visitAnimal(Animal animal) {
-                            ActorDetailsWidget.showActorDetails(ui, simulation.getWorld(),
-                                                                animal, false);
-                        }
-                    });
+            float[] genes = new float[8];
+            if (statisticsSystem != null && statisticsSystem.getAliveAnimalsCount() != 0) {
+                for (int i = 0; i < 8; i++) {
+                    genes[i] = statisticsSystem.getGenes()[i] /
+                            (float) statisticsSystem.getAliveAnimalsCount() / 8.0f;
+                }
+            }
+            ui.plotHistogram("Genes", genes, 0, "", 0.0f, 1.0f, new Vec2(100, 100), 1);
         }
 
         if (ui.collapsingHeader("Add actors", 0)) {
@@ -185,16 +189,13 @@ public class SimulationWidget implements Widget {
 
                 if (statisticsSystem != null) {
                     System.arraycopy(aliveHist, 1, aliveHist, 0, aliveHist.length - 1);
-                    aliveHist[aliveHist.length - 1] = statisticsSystem.getAliveCount();
+                    aliveHist[aliveHist.length - 1] = statisticsSystem.getAliveAnimalsCount();
 
                     System.arraycopy(childrenHist, 1, childrenHist, 0, childrenHist.length - 1);
-                    childrenHist[childrenHist.length - 1] = statisticsSystem.getChildrenSum();
-                }
+                    childrenHist[childrenHist.length - 1] = statisticsSystem.getChildrenAverage();
 
-                if (deathSystem != null) {
-                    System.arraycopy(deathHist, 1, deathHist, 0, deathHist.length - 1);
-                    deathHist[deathHist.length - 1] = deathSystem.getDeathCount();
-                }
+                    System.arraycopy(bushHist, 1, bushHist, 0, bushHist.length - 1);
+                    bushHist[bushHist.length - 1] = statisticsSystem.getPresentBushCount();
 
                 if (spawnSystem != null) {
                     System.arraycopy(spawnHist, 1, spawnHist, 0, spawnHist.length - 1);

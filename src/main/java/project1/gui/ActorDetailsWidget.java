@@ -1,5 +1,7 @@
 package project1.gui;
 
+import glm_.vec2.Vec2;
+import imgui.Cond;
 import imgui.ImGui;
 import project1.actors.Animal;
 import project1.actors.Bush;
@@ -21,6 +23,7 @@ public class ActorDetailsWidget implements Widget {
         if (windowOpenPinned[0]) {
             String simpleName = pinned.getClass().getSimpleName();
             ui.begin("Pinned " + simpleName + " " + pinned.hashCode(), windowOpenPinned, 0);
+            ui.setWindowSize(new Vec2(200, 300), Cond.Once);
             showActorDetails(ui, world, pinned, false);
             ui.end();
         }
@@ -63,6 +66,11 @@ public class ActorDetailsWidget implements Widget {
                 ui.text("%d", animal.getChildren());
                 ui.nextColumn();
 
+                ui.text("Age");
+                ui.nextColumn();
+                ui.text("%d", animal.getAge());
+                ui.nextColumn();
+
                 ui.text("Genes");
                 ui.nextColumn();
 
@@ -98,6 +106,7 @@ public class ActorDetailsWidget implements Widget {
             }
 
             if (showPinned) {
+                ui.sameLine(0, 0);
                 if (ui.smallButton("Pinned")) {
                     pressed = true;
                 }

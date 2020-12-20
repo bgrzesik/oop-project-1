@@ -2,6 +2,7 @@ package project1;
 
 import project1.data.SimulationConfig;
 import project1.listeners.BreedingSystem;
+import project1.listeners.DeathListener;
 import project1.listeners.FeedingSystem;
 import project1.tick.CollisionSystem;
 import project1.tick.SpawnSystem;

@@ -19,7 +19,8 @@ public class BreedingSystem implements CollisionListener {
         Iterator<Animal> animals = actors.stream()
                                          .filter(a -> a instanceof Animal)
                                          .map(a -> (Animal) a)
-                                         .filter(a -> a.getEnergy() > config.getMinimalBreedEnergy())
+                                         .filter(a -> a.getEnergy() > config
+                                                 .getMinimalBreedEnergy())
                                          .sorted(Comparator.comparingInt(Animal::getEnergy))
                                          .iterator();
 
@@ -62,7 +63,7 @@ public class BreedingSystem implements CollisionListener {
         int lSplit = Math.min(split0, split1);
         int rSplit = Math.max(split0, split1);
 
-        Animal[] animals = new Animal[] { animalA, animalB };
+        Animal[] animals = new Animal[]{animalA, animalB};
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 0, 1, 1));
 
         int low = list.remove(random.nextInt(list.size()));
@@ -74,7 +75,28 @@ public class BreedingSystem implements CollisionListener {
         System.arraycopy(animals[low].getGenes(), 0, genes, 0, lSplit);
         System.arraycopy(animals[mid].getGenes(), lSplit, genes, lSplit, rSplit - lSplit);
         System.arraycopy(animals[high].getGenes(), rSplit, genes, rSplit, 32 - rSplit);
-        Arrays.sort(genes);
+
+        List<Integer> geneCount = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0);
+        for (int i = 0; i < 32; i++) {
+            geneCount.set(genes[i], geneCount.get(genes[i]) + 1);
+        }
+
+        while (geneCount.contains(0)) {
+            int missingGene = geneCount.indexOf(0);
+
+            int gene = geneCount.indexOf(Collections.max(geneCount));
+
+            geneCount.set(gene, geneCount.get(gene) - 1);
+            geneCount.set(missingGene, 1);
+        }
+
+        int cursor = 0;
+        for (int gene = 0; gene < 8; gene++) {
+            for (int i = cursor; i < cursor + geneCount.get(gene); i++) {
+                genes[i] = gene;
+            }
+            cursor += geneCount.get(gene);
+        }
 
         Animal child = new Animal(world.getEpoch(), x, y, energy, genes);
         child.rotate(random.nextInt(Direction.values().length));

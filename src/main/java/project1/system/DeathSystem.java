@@ -10,9 +10,7 @@ import project1.world.Cell;
 import project1.world.World;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class DeathSystem implements WorldActorVisitor, CellTickListener {
     private final List<DeathListener> globalDeathListeners = new ArrayList<>();

@@ -1,6 +1,5 @@
 package project1.actors;
 
-import project1.listeners.DeathListener;
 import project1.visitors.WorldActorVisitor;
 
 public interface WorldActor {

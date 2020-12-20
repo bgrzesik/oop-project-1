@@ -1,7 +1,6 @@
 package project1.system;
 
 import project1.Simulation;
-import project1.actors.AbstractWorldActor;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;

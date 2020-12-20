@@ -6,11 +6,9 @@ import project1.actors.Bush;
 import project1.actors.WorldActor;
 import project1.listeners.CollisionListener;
 import project1.world.Cell;
-import project1.world.World;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 public class FeedingSystem implements CollisionListener {

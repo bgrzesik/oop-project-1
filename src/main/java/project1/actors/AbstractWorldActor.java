@@ -1,10 +1,5 @@
 package project1.actors;
 
-import project1.listeners.DeathListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class AbstractWorldActor implements WorldActor {
     protected int x;
     protected int y;

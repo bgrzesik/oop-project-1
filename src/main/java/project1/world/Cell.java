@@ -1,11 +1,8 @@
 package project1.world;
 
 import project1.actors.WorldActor;
-import project1.visitors.WorldActorVisitor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Cell {

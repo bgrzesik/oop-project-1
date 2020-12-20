@@ -5,7 +5,6 @@ import project1.actors.WorldActor;
 import project1.listeners.CollisionListener;
 import project1.tick.CellTickListener;
 import project1.world.Cell;
-import project1.world.World;
 
 import java.util.ArrayList;
 import java.util.List;

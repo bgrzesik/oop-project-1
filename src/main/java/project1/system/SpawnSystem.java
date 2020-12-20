@@ -1,10 +1,11 @@
-package project1.tick;
+package project1.system;
 
 import glm_.vec2.Vec2i;
 import project1.Simulation;
 import project1.actors.Bush;
 import project1.data.SimulationConfig;
 import project1.listeners.SpawnListener;
+import project1.tick.TickListener;
 import project1.world.Cell;
 import project1.world.World;
 

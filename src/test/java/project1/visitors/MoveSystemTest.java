@@ -4,6 +4,7 @@ import org.junit.Test;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.data.SimulationConfig;
+import project1.system.MoveSystem;
 import project1.world.World;
 
 import java.util.Arrays;

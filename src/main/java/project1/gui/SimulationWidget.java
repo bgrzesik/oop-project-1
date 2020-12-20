@@ -7,10 +7,7 @@ import kotlin.reflect.KMutableProperty0;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
-import project1.tick.SpawnSystem;
-import project1.visitors.DeathSystem;
-import project1.visitors.StatisticsSystem;
-import project1.visitors.WorldActorVisitor;
+import project1.system.StatisticsSystem;
 import project1.world.World;
 
 import java.util.Random;

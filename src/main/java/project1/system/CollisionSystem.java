@@ -1,8 +1,9 @@
-package project1.tick;
+package project1.system;
 
 import project1.Simulation;
 import project1.actors.WorldActor;
 import project1.listeners.CollisionListener;
+import project1.tick.CellTickListener;
 import project1.world.Cell;
 import project1.world.World;
 

@@ -1,10 +1,11 @@
-package project1.listeners;
+package project1.system;
 
 import project1.data.Direction;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.WorldActor;
 import project1.data.SimulationConfig;
+import project1.listeners.CollisionListener;
 import project1.world.Cell;
 import project1.world.World;
 

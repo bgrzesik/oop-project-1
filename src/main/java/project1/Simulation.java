@@ -1,14 +1,11 @@
 package project1;
 
 import project1.data.SimulationConfig;
-import project1.listeners.*;
-import project1.tick.CollisionSystem;
-import project1.tick.SpawnSystem;
+import project1.system.*;
 import project1.tick.TickListener;
-import project1.visitors.DeathSystem;
-import project1.visitors.MoveSystem;
-import project1.visitors.StatisticsSystem;
 import project1.world.World;
+import project1.world.WorldDeathListener;
+import project1.world.WorldSpawnListener;
 
 import java.util.ArrayList;
 import java.util.List;

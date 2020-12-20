@@ -1,10 +1,11 @@
-package project1.visitors;
+package project1.system;
 
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.listeners.DeathListener;
 import project1.tick.CellTickListener;
+import project1.visitors.WorldActorVisitor;
 import project1.world.Cell;
 import project1.world.World;
 

@@ -1,6 +1,7 @@
-package project1.listeners;
+package project1.world;
 
 import project1.actors.WorldActor;
+import project1.listeners.DeathListener;
 import project1.world.World;
 
 public class WorldDeathListener implements DeathListener {

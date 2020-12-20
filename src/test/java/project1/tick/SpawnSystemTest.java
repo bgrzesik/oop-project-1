@@ -3,7 +3,8 @@ package project1.tick;
 import org.junit.Test;
 import project1.Simulation;
 import project1.data.SimulationConfig;
-import project1.visitors.StatisticsSystem;
+import project1.system.SpawnSystem;
+import project1.system.StatisticsSystem;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package project1.visitors;
+package project1.system;
 
 import project1.Simulation;
 import project1.actors.AbstractWorldActor;
@@ -8,6 +8,7 @@ import project1.actors.WorldActor;
 import project1.listeners.DeathListener;
 import project1.listeners.SpawnListener;
 import project1.tick.TickListener;
+import project1.visitors.WorldActorVisitor;
 import project1.world.World;
 
 public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener, SpawnListener {

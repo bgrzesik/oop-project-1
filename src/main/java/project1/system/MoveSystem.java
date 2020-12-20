@@ -1,10 +1,11 @@
-package project1.visitors;
+package project1.system;
 
 import project1.data.Direction;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.tick.TickListener;
+import project1.visitors.WorldActorVisitor;
 import project1.world.World;
 
 import java.util.Random;

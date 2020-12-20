@@ -3,7 +3,6 @@ package project1.world;
 import project1.Simulation;
 import project1.actors.WorldActor;
 import project1.listeners.MoveObservable;
-import project1.listeners.WorldMoveObserver;
 import project1.tick.TickListener;
 import project1.visitors.WorldActorVisitor;
 

@@ -114,7 +114,7 @@ public class SimulationWidget implements Widget {
             text = String.format("Energy: %.2f", valuef);
             ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
 
-            value = statisticsSystem != null ? statisticsSystem.getEpoch() : -1;
+            value = simulation.getWorld().getEpoch();
             ui.text("Epoch: %d", value);
 
             value = deathSystem != null ? deathSystem.getDeathCount() : -1;
@@ -148,7 +148,7 @@ public class SimulationWidget implements Widget {
                     for (int i = 0; i < amount.get(); i++) {
                         int x = random.nextInt(world.getWidth());
                         int y = random.nextInt(world.getHeight());
-                        Animal animal = new Animal(x, y, addActorWidget
+                        Animal animal = new Animal(world.getEpoch(), x, y, addActorWidget
                                 .getEnergy(), addActorWidget.getGenes());
                         world.addActor(animal);
                     }

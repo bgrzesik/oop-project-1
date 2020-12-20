@@ -24,8 +24,15 @@ public class WorldWidget implements Widget {
 //    public static final int JUNGLE_COLOR = 0xff00bbaa;
 
     public static final int LINE_COLOR = 0x22000000;
-    public static final int WORLD_COLOR = 0xffffffff;
-    public static final int JUNGLE_COLOR = 0xffbbffbb;
+    public static final int WORLD_COLOR = 0xffbbffbb;
+    public static final int JUNGLE_COLOR = 0xff77ff77;
+    public static final String ANIMAL_TEXTURE = "Animal3.png";
+    public static final String BUSH_TEXTURE = "Bush3.png";
+
+//    public static final int WORLD_COLOR = 0xffffffff;j
+//    public static final int JUNGLE_COLOR = 0xffbbffbb;
+//    public static final String ANIMAL_TEXTURE = "Animal.png";
+//    public static final String BUSH_TEXTURE = "Bush.png";
 
     public Texture animalTexture;
     public Texture bushTexture;
@@ -52,8 +59,8 @@ public class WorldWidget implements Widget {
 
         this.detailsWidget = new CellDetailsWidget(world, simulationIdx);
 
-        this.animalTexture = new Texture(Gdx.files.internal("Animal2.png"));
-        this.bushTexture = new Texture(Gdx.files.internal("Bush2.png"));
+        this.animalTexture = new Texture(Gdx.files.internal(ANIMAL_TEXTURE));
+        this.bushTexture = new Texture(Gdx.files.internal(BUSH_TEXTURE));
     }
 
 
@@ -78,7 +85,8 @@ public class WorldWidget implements Widget {
 
         drawList.addRectFilled(pos.plus(new Vec2(left, bottom)
                                                 .times(cellSize)),
-                               pos.plus(new Vec2(left + config.getJungleWidth(), bottom + config.getJungleHeight())
+                               pos.plus(new Vec2(left + config.getJungleWidth(),
+                                                 bottom + config.getJungleHeight())
                                                 .times(cellSize)),
                                JUNGLE_COLOR, 0, 0);
 
@@ -112,9 +120,9 @@ public class WorldWidget implements Widget {
                 if (ui.isMouseClicked(MouseButton.Left, false)) {
                     switch (simulationWidget.getQuickAdd()) {
                         case AddActorWidget.ADD_ANIMAL:
-                            world.addActor(new Animal(x, y,
-                                                      addActorWidget.getEnergy(), addActorWidget
-                                                              .getGenes()));
+                            world.addActor(new Animal(world.getEpoch(), x, y,
+                                                      addActorWidget.getEnergy(),
+                                                      addActorWidget.getGenes()));
                             break;
                         case AddActorWidget.ADD_BUSH:
                             world.addActor(new Bush(x, y,

@@ -66,6 +66,11 @@ public class ActorDetailsWidget implements Widget {
                 ui.text("%d", animal.getChildren());
                 ui.nextColumn();
 
+                ui.text("Born");
+                ui.nextColumn();
+                ui.text("%d", animal.getBorn());
+                ui.nextColumn();
+
                 ui.text("Age");
                 ui.nextColumn();
                 ui.text("%d", animal.getAge());

@@ -15,11 +15,13 @@ public class Animal extends AbstractWorldActor implements MoveObservable {
     private Direction direction = Direction.N;
     private int children = 0;
     private int age = 0;
+    private final int born;
 
 
-    public Animal(int x, int y, int energy, int[] genes) {
+    public Animal(int born, int x, int y, int energy, int[] genes) {
         super(x, y, energy);
         this.genes = genes;
+        this.born = born;
     }
 
     public void loseEnergy(int energy) {
@@ -78,5 +80,9 @@ public class Animal extends AbstractWorldActor implements MoveObservable {
 
     public void increaseChildren() {
         this.children += 1;
+    }
+
+    public int getBorn() {
+        return born;
     }
 }

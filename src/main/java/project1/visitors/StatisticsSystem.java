@@ -4,16 +4,16 @@ import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.tick.TickListener;
+import project1.world.World;
 
-public class StatisticsSystem implements WorldActorVisitor,  TickListener {
+public class StatisticsSystem implements WorldActorVisitor, TickListener {
     private int aliveAnimalsCount;
     private int presentBushCount;
     private int childrenSum;
     private int energySum;
     private int ageSum;
-    private int epoch = 0;
 
-    private int[] genes = new int[8];
+    private final int[] genes = new int[8];
 
 
     @Override
@@ -23,13 +23,13 @@ public class StatisticsSystem implements WorldActorVisitor,  TickListener {
         this.childrenSum = 0;
         this.energySum = 0;
         this.ageSum = 0;
-        this.epoch += 1;
 
         for (int i = 0; i < 8; i++) {
             genes[i] = 0;
         }
 
-        simulation.getWorld().accept(this);
+        World world = simulation.getWorld();
+       world.accept(this);
     }
 
     @Override
@@ -50,10 +50,6 @@ public class StatisticsSystem implements WorldActorVisitor,  TickListener {
             this.genes[gene] += 1;
         }
 
-    }
-
-    public int getEpoch() {
-        return epoch;
     }
 
     public int getAliveAnimalsCount() {

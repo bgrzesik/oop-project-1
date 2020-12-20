@@ -78,7 +78,7 @@ public class BreedingSystem implements CollisionListener {
         System.arraycopy(animals[high].getGenes(), rSplit, genes, rSplit, 32 - rSplit);
         Arrays.sort(genes);
 
-        Animal child = new Animal(x, y, energy, genes);
+        Animal child = new Animal(world.getEpoch(), x, y, energy, genes);
         child.rotate(random.nextInt(Direction.values().length));
         world.addActor(child);
     }

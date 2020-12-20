@@ -16,13 +16,14 @@ import java.util.List;
 
 public class Simulation {
 
-    private World world;
-    private List<TickListener> listeners = new ArrayList<>();
+    private final World world;
+    private final List<TickListener> listeners = new ArrayList<>();
     private final SimulationConfig config;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
         this.world = new World(config.getWorldWidth(), config.getWorldHeight());
+        listeners.add(world);
     }
 
     public World getWorld() {

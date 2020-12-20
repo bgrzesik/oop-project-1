@@ -5,20 +5,22 @@ import imgui.*;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;
+import project1.visitors.StatisticsSystem;
 import project1.world.Cell;
 import project1.world.World;
 
 import java.util.*;
 
 public class CellDetailsWidget implements Widget {
-    private boolean[] windowOpen = new boolean[]{false};
     private int x = 0;
     private int y = 0;
 
-    private World world;
-    private int simulationIdx;
-    private List<ActorDetailsWidget> pinned = new ArrayList<>();
-    private AddActorWidget addActorWidget = new AddActorWidget();
+    private final World world;
+    private final int simulationIdx;
+    private final List<ActorDetailsWidget> pinned = new ArrayList<>();
+    private final AddActorWidget addActorWidget = new AddActorWidget();
+
+    private final boolean[] windowOpen = new boolean[]{false};
 
     public CellDetailsWidget(World world, int simulationIdx) {
         this.world = world;
@@ -49,8 +51,11 @@ public class CellDetailsWidget implements Widget {
                 addActorWidget.render(ui);
                 switch (addActorWidget.getAddType()) {
                     case AddActorWidget.ADD_ANIMAL:
-                        world.addActor(new Animal(x, y, addActorWidget.getEnergy(), addActorWidget
-                                .getGenes()));
+                        int epoch = world.getEpoch();
+                        Animal actor = new Animal(epoch, x, y,
+                                                  addActorWidget.getEnergy(),
+                                                  addActorWidget.getGenes());
+                        world.addActor(actor);
                         break;
                     case AddActorWidget.ADD_BUSH:
                         world.addActor(new Bush(x, y, addActorWidget.getEnergy()));
@@ -63,8 +68,8 @@ public class CellDetailsWidget implements Widget {
             ui.end();
         }
 
-        for (int i = 0; i < pinned.size(); i++) {
-            pinned.get(i).render(ui);
+        for (ActorDetailsWidget actorDetailsWidget : pinned) {
+            actorDetailsWidget.render(ui);
         }
         pinned.removeIf(ActorDetailsWidget::shouldRemove);
     }

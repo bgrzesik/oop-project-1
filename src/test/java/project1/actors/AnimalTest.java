@@ -8,7 +8,7 @@ public class AnimalTest {
 
     @Test
     public void loseEnergy() {
-        Animal animal = new Animal(0, 0, 10, new int[32]);
+        Animal animal = new Animal(0, 0, 0, 10, new int[32]);
         assertFalse(animal.pendingRemoval());
 
         assertEquals(10, animal.getEnergy());
@@ -26,7 +26,7 @@ public class AnimalTest {
 
     @Test
     public void gainEnergy() {
-        Animal animal = new Animal(0, 0, 10, new int[32]);
+        Animal animal = new Animal(0, 0, 0, 10, new int[32]);
         assertEquals(10, animal.getEnergy());
         assertFalse(animal.pendingRemoval());
 

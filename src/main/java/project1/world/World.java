@@ -1,16 +1,18 @@
 package project1.world;
 
-import com.badlogic.gdx.graphics.Texture;
+import project1.Simulation;
 import project1.actors.WorldActor;
 import project1.listeners.MoveObservable;
 import project1.listeners.WorldDeathListener;
 import project1.listeners.WorldMoveObserver;
-import project1.visitors.StatisticsSystem;
+import project1.tick.TickListener;
 import project1.visitors.WorldActorVisitor;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-public class World {
+public class World implements TickListener {
+    private int epoch = 0;
     private final int width;
     private final int height;
 
@@ -31,6 +33,11 @@ public class World {
                 this.cells[x][y] = new Cell();
             }
         }
+    }
+
+    @Override
+    public void tick(Simulation simulation) {
+        epoch++;
     }
 
     public void addActor(WorldActor actor) {
@@ -84,5 +91,9 @@ public class World {
             actors.removeAll(pendingRemoval);
             pendingRemoval = null;
         }
+    }
+
+    public int getEpoch() {
+        return epoch;
     }
 }

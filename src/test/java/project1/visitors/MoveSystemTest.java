@@ -26,7 +26,7 @@ public class MoveSystemTest {
         int[] genes = new int[32];
         Arrays.fill(genes, 0);
 
-        Animal animal = new Animal(10, 10, 5, genes);
+        Animal animal = new Animal(0, 10, 10, 5, genes);
         world.addActor(animal);
 
         assertEquals(10, animal.getX());

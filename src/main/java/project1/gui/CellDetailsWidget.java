@@ -36,18 +36,7 @@ public class CellDetailsWidget implements Widget {
             ui.text("X: %d", x);
             ui.text("Y: %d", y);
 
-            Cell cell = world.getCell(x, y);
-
-            Set<WorldActor> actors = new HashSet<>(cell.getActors());
-            if (ui.collapsingHeader("Actors", TreeNodeFlag.DefaultOpen.i) && actors.size() > 0) {
-                for (WorldActor actor : actors) {
-                    if (ActorDetailsWidget.showActorDetails(ui, world, actor, true)) {
-                        pinned.add(new ActorDetailsWidget(world, actor));
-                    }
-                }
-            }
-
-            if (ui.collapsingHeader("Add actor", TreeNodeFlag.DefaultOpen.i)) {
+            if (ui.collapsingHeader("Add actor", 0)) {
                 addActorWidget.render(ui);
                 switch (addActorWidget.getAddType()) {
                     case AddActorWidget.ADD_ANIMAL:
@@ -62,6 +51,17 @@ public class CellDetailsWidget implements Widget {
                         break;
                     default:
                         break;
+                }
+            }
+
+            Cell cell = world.getCell(x, y);
+
+            Set<WorldActor> actors = new HashSet<>(cell.getActors());
+            if (ui.collapsingHeader("Actors", TreeNodeFlag.DefaultOpen.i) && actors.size() > 0) {
+                for (WorldActor actor : actors) {
+                    if (ActorDetailsWidget.showActorDetails(ui, world, actor, true)) {
+                        pinned.add(new ActorDetailsWidget(world, actor));
+                    }
                 }
             }
 

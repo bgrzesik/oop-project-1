@@ -45,6 +45,8 @@ public class SimApplication extends ApplicationAdapter {
         this.implGlfw = ImplGlfw.Companion.initForOpengl(this.window, false, null);
         this.implGL3 = new ImplGL3();
         this.ui.styleColorsDark(null);
+        this.ui.getStyle()
+                .setFrameRounding(6.0f);
 
         Gdx.input.setInputProcessor(new ImGuiLibGdxTranslator());
         updateCallbacks();
@@ -114,6 +116,8 @@ public class SimApplication extends ApplicationAdapter {
             simulationWidgets.add(new SimulationWidget(simulationIdx, Simulation.create(config)));
             simulationIdx += 1;
         }
+
+        ui.showDemoWindow(new boolean[]{true});
 
         ui.render();
 

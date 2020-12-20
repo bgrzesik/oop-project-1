@@ -14,8 +14,6 @@ import project1.data.SimulationConfig;
 import project1.visitors.WorldActorVisitorAdapter;
 import project1.world.World;
 
-import static project1.tick.SpawnSystem.*;
-
 public class WorldWidget implements Widget {
 //    public static final int ANIMAL_COLOR = 0xff1111ee;
 //    public static final int BUSH_COLOR = 0xff026e00;
@@ -71,7 +69,6 @@ public class WorldWidget implements Widget {
 
         Vec2 size = new Vec2(world.getWidth(), world.getHeight()).times(cellSize);
 
-//        ui.setWindowPos(new Vec2(30, 120), Cond.Once);
         ui.setWindowSize(size.plus(30, 60), Cond.Once);
         DrawList drawList = ui.getWindowDrawList();
 
@@ -186,11 +183,4 @@ public class WorldWidget implements Widget {
                           new Vec2(0, 0), new Vec2(1, 1), 0xffffffff);
     }
 
-    public float getCellSize() {
-        return cellSize;
-    }
-
-    public void setCellSize(float cellSize) {
-        this.cellSize = cellSize;
-    }
 }

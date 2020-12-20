@@ -42,7 +42,7 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener {
         animal.age();
 
         this.aliveAnimalsCount++;
-        this.childrenSum += animal.getChildren();
+        this.childrenSum += animal.getChildrenCount();
         this.energySum += animal.getEnergy();
         this.ageSum += animal.getAge();
 

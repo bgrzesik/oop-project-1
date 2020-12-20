@@ -10,12 +10,13 @@ import java.util.List;
 
 public class Animal extends AbstractWorldActor implements MoveObservable {
 
-    private List<MoveObserver> moveObservers = new ArrayList<>();
-    private int[] genes;
-    private Direction direction = Direction.N;
-    private int children = 0;
-    private int age = 0;
+    private final List<Animal> children = new ArrayList<>();
+    private final List<MoveObserver> moveObservers = new ArrayList<>();
+    private final int[] genes;
     private final int born;
+
+    private Direction direction = Direction.N;
+    private int age = 0;
 
 
     public Animal(int born, int x, int y, int energy, int[] genes) {
@@ -56,8 +57,12 @@ public class Animal extends AbstractWorldActor implements MoveObservable {
         this.direction = Direction.values()[ordinal];
     }
 
-    public int getChildren() {
+    public List<Animal> getChildren() {
         return this.children;
+    }
+
+    public int getChildrenCount() {
+        return this.children.size();
     }
 
     public int getAge() {
@@ -78,8 +83,8 @@ public class Animal extends AbstractWorldActor implements MoveObservable {
         this.moveObservers.remove(observer);
     }
 
-    public void increaseChildren() {
-        this.children += 1;
+    public void addChild(Animal child) {
+        this.children.add(child);
     }
 
     public int getBorn() {

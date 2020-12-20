@@ -47,8 +47,6 @@ public class BreedingSystem implements CollisionListener {
         int energy = (int) (animalA.getEnergy() * energyPart + animalB.getEnergy() * energyPart);
         animalA.loseEnergy((int) (animalA.getEnergy() * energyPart));
         animalB.loseEnergy((int) (animalB.getEnergy() * energyPart));
-        animalA.increaseChildren();
-        animalB.increaseChildren();
 
         Direction direction = Direction.values()[random.nextInt(Direction.values().length)];
 
@@ -81,6 +79,9 @@ public class BreedingSystem implements CollisionListener {
         Animal child = new Animal(world.getEpoch(), x, y, energy, genes);
         child.rotate(random.nextInt(Direction.values().length));
         world.addActor(child);
+
+        animalA.addChild(child);
+        animalB.addChild(child);
     }
 
 }

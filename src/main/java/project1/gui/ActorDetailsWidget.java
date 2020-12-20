@@ -37,64 +37,74 @@ public class ActorDetailsWidget implements Widget {
         String simpleName = actor.getClass().getSimpleName();
         boolean pressed = false;
         if (ui.treeNode(actor, "%s %d", simpleName, actor.hashCode())) {
+            ui.sameLine(0, 5);
+            if (ui.smallButton("Delete")) {
+                world.removeActor(actor);
+            }
+
+            if (showPinned) {
+                ui.sameLine(0, 5);
+                if (ui.smallButton("Pin")) {
+                    pressed = true;
+                }
+            }
+
             ui.columns(2, "props", true);
-            ui.text("X");
+            ui.bulletText("X");
             ui.nextColumn();
             ui.text("%d", actor.getX());
             ui.nextColumn();
 
-            ui.text("Y");
+            ui.bulletText("Y");
             ui.nextColumn();
             ui.text("%d", actor.getY());
             ui.nextColumn();
 
-            ui.text("Energy");
+            ui.bulletText("Energy");
             ui.nextColumn();
             ui.text("%d", actor.getEnergy());
             ui.nextColumn();
 
-            ui.text("Pending removal");
+            ui.bulletText("Pending removal");
             ui.nextColumn();
             ui.text("%b", actor.pendingRemoval());
             ui.nextColumn();
 
             if (actor instanceof Animal) {
                 Animal animal = (Animal) actor;
-
-                ui.text("Children");
-                ui.nextColumn();
-                ui.text("%d", animal.getChildren());
-                ui.nextColumn();
-
-                ui.text("Born");
+                ui.bulletText("Born");
                 ui.nextColumn();
                 ui.text("%d", animal.getBorn());
                 ui.nextColumn();
 
-                ui.text("Age");
+                ui.bulletText("Age");
                 ui.nextColumn();
                 ui.text("%d", animal.getAge());
                 ui.nextColumn();
 
-                ui.text("Genes");
+                ui.bulletText("Genes");
                 ui.nextColumn();
 
                 int[] genes = animal.getGenes();
 
-                String[] genesString = new String[16];
-                for (int i = 0; i < 16; i++) {
+                String[] genesString = new String[32];
+                for (int i = 0; i < 32; i++) {
                     genesString[i] = String.valueOf(genes[i]);
                 }
 
                 ui.text("%s", String.join("", genesString));
                 ui.nextColumn();
-                ui.nextColumn();
 
-                for (int i = 0; i < 16; i++) {
-                    genesString[i] = String.valueOf(genes[16 + i]);
+
+                ui.columns(1, "", false);
+//                ui.separator();
+                if (ui.treeNode(String.format("Children (%d)", animal.getChildrenCount()))) {
+                    for (Animal child : animal.getChildren()) {
+                        showActorDetails(ui, world, child, showPinned);
+                    }
+                    ui.treePop();
                 }
-                ui.text("%s", String.join("", genesString));
-                ui.nextColumn();
+
             } else if (actor instanceof Bush) {
                 Bush bush = (Bush) actor;
 
@@ -102,19 +112,8 @@ public class ActorDetailsWidget implements Widget {
                 ui.nextColumn();
                 ui.text("%b", bush.wasEaten());
                 ui.nextColumn();
-            }
 
-            ui.columns(1, "", false);
-
-            if (ui.smallButton("Delete")) {
-                world.removeActor(actor);
-            }
-
-            if (showPinned) {
-                ui.sameLine(0, 0);
-                if (ui.smallButton("Pinned")) {
-                    pressed = true;
-                }
+                ui.columns(1, "", false);
             }
 
             ui.treePop();

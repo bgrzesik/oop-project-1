@@ -97,6 +97,10 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
         return genes;
     }
 
+    public int getDeadCount() {
+        return deadCount;
+    }
+
     @Override
     public void dead(WorldActor actor) {
         if (!(actor instanceof Animal)) {

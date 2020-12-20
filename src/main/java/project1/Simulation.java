@@ -52,12 +52,6 @@ public class Simulation {
 
         StatisticsSystem statisticsSystem = null;
 
-        if (config.isSpawnSystemOn()) {
-            SpawnSystem spawnSystem = new SpawnSystem();
-            simulation.addTickListeners(spawnSystem);
-            spawnSystem.addSpawnListener(new WorldSpawnListener(world));
-        }
-
         if (config.isMoveSystemOn()) {
             simulation.addTickListeners(new MoveSystem());
         }
@@ -65,6 +59,16 @@ public class Simulation {
         if (config.isStatisticsSystemOn()) {
             statisticsSystem = new StatisticsSystem();
             simulation.addTickListeners(statisticsSystem);
+        }
+
+        if (config.isSpawnSystemOn()) {
+            SpawnSystem spawnSystem = new SpawnSystem();
+            simulation.addTickListeners(spawnSystem);
+            spawnSystem.addSpawnListener(new WorldSpawnListener(world));
+
+            if (config.isStatisticsSystemOn()) {
+                spawnSystem.addSpawnListener(statisticsSystem);
+            }
         }
 
         if (config.isDeathSystemOn()) {

@@ -1,11 +1,13 @@
 package project1.tick;
 
+import glm_.vec2.Vec2i;
 import project1.Simulation;
 import project1.actors.Bush;
 import project1.data.SimulationConfig;
+import project1.world.Cell;
 import project1.world.World;
 
-import java.util.Random;
+import java.util.*;
 
 public class SpawnSystem implements TickListener {
     private final Random random = new Random(42);
@@ -14,57 +16,60 @@ public class SpawnSystem implements TickListener {
 
     @Override
     public void tick(Simulation simulation) {
-        spawnInJungle(simulation);
-        spawnOutsideJungle(simulation);
+        World world = simulation.getWorld();
+        SimulationConfig config = simulation.getConfig();
+
+        List<Vec2i> freeJungleSpots = new LinkedList<>();
+        List<Vec2i> freePlainsSpots = new LinkedList<>();
+
+        for (int x = 0; x < world.getWidth(); x++) {
+            for (int y = 0; y < world.getHeight(); y++) {
+                Cell cell = world.getCell(x, y);
+
+                if (cell.getActors().stream().anyMatch(a -> a instanceof Bush)) {
+                    continue;
+                }
+
+                if (inJungle(x, y, config)) {
+                    freeJungleSpots.add(new Vec2i(x, y));
+                } else {
+                    freePlainsSpots.add(new Vec2i(x, y));
+                }
+            }
+        }
+
+
+        int n = Math.min(config.getSpawnOutsideJungle(), freePlainsSpots.size());
+        spawnBushesFromSpots(freePlainsSpots, config, world, n);
+
+        n = Math.min(config.getSpawnInJungle(), freeJungleSpots.size());
+        spawnBushesFromSpots(freeJungleSpots, config, world, n);
+    }
+
+    private void spawnBushesFromSpots(List<Vec2i> freeJungleSpots, SimulationConfig config, World world, int n) {
+        for (int i = 0; i < n; i++) {
+            Vec2i spot = freeJungleSpots.remove(random.nextInt(freeJungleSpots.size()));
+            int bushEnergy = config.getSpawnBushEnergy();
+
+            Bush bush = new Bush(spot.getX(), spot.getY(), bushEnergy);
+            world.addActor(bush);
+            this.bushCount++;
+        }
     }
 
     public int getBushCount() {
         return bushCount;
     }
 
-    public void spawnOutsideJungle(Simulation simulation) {
-        SimulationConfig config = simulation.getConfig();
-        World world = simulation.getWorld();
-
+    public boolean inJungle(int x, int y, SimulationConfig config) {
         int bottom = config.getWorldHeight() / 2 - config.getJungleHeight() / 2;
         int top = config.getWorldHeight() / 2 + config.getJungleHeight() / 2;
         int left = config.getWorldWidth() / 2 - config.getJungleWidth() / 2;
         int right = config.getWorldWidth() / 2 + config.getJungleWidth() / 2;
 
-        for (int i = 0; i < config.getSpawnOutsideJungle(); i++) {
-            int x, y;
-
-            do {
-                x = random.nextInt(world.getWidth());
-                y = random.nextInt(world.getHeight());
-            } while (left <= x && x <= right &&
-                    bottom <= y && y <= top);
-
-            int bushEnergy = config.getSpawnBushEnergy();
-
-            Bush bush = new Bush(x, y, bushEnergy);
-            world.addActor(bush);
-            this.bushCount++;
-        }
+        return left <= x && x <= right &&
+                bottom <= y && y <= top;
     }
 
-    public void spawnInJungle(Simulation simulation) {
-        SimulationConfig config = simulation.getConfig();
-        World world = simulation.getWorld();
-
-        int bottom = world.getHeight() / 2 - config.getJungleHeight() / 2;
-        int left = world.getWidth() / 2 - config.getJungleWidth() / 2;
-
-        for (int i = 0; i < config.getSpawnOutsideJungle(); i++) {
-            int x = left + random.nextInt(config.getJungleWidth());
-            int y = bottom + random.nextInt(config.getJungleHeight());
-
-            int bushEnergy = config.getSpawnBushEnergy();
-
-            Bush bush = new Bush(x, y, bushEnergy);
-            world.addActor(bush);
-            this.bushCount++;
-        }
-    }
 
 }

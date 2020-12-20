@@ -8,16 +8,19 @@ import project1.tick.CellTickListener;
 import project1.world.Cell;
 import project1.world.World;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DeathSystem implements WorldActorVisitor, CellTickListener {
-    private World world;
+    private final List<DeathListener> globalDeathListeners = new ArrayList<>();
     private int deathCount = 0;
 
     @Override
     public void visitBush(Bush bush) {
         if (bush.pendingRemoval()) {
+            globalDeathListeners.forEach(l -> l.dead(bush));
             bush.kill();
         }
     }
@@ -25,6 +28,7 @@ public class DeathSystem implements WorldActorVisitor, CellTickListener {
     @Override
     public void visitAnimal(Animal animal) {
         if (animal.pendingRemoval()) {
+            globalDeathListeners.forEach(l -> l.dead(animal));
             animal.kill();
             deathCount += 1;
         }
@@ -32,11 +36,19 @@ public class DeathSystem implements WorldActorVisitor, CellTickListener {
 
     @Override
     public void tick(Simulation simulation, Cell cell) {
-        this.world = simulation.getWorld();
-        this.world.accept(this);
+        World world = simulation.getWorld();
+        world.accept(this);
     }
 
     public int getDeathCount() {
         return deathCount;
+    }
+
+    public void addDeathListener(DeathListener deathListener) {
+        globalDeathListeners.add(deathListener);
+    }
+
+    public void removeDeathListener(DeathListener deathListener) {
+        globalDeathListeners.remove(deathListener);
     }
 }

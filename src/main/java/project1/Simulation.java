@@ -70,6 +70,12 @@ public class Simulation {
             simulation.addTickListeners(new StatisticsSystem());
         }
 
+        if (config.isDeathSystemOn() && config.isStatisticsSystemOn()) {
+            StatisticsSystem statisticsSystem = simulation.getTickListener(StatisticsSystem.class);
+            simulation.getTickListener(DeathSystem.class)
+                      .addDeathListener(statisticsSystem);
+        }
+
         if (config.isBreedingSystemOn() || config.isFeedingSystemOn()) {
             CollisionSystem collisionSystem = new CollisionSystem();
 

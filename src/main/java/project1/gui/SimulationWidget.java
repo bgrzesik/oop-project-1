@@ -34,6 +34,7 @@ public class SimulationWidget implements Widget {
     private float[] bushHist = new float[30];
     private float[] energyHist = new float[30];
     private float[] ageHist = new float[30];
+    private float[] deathAgeHist = new float[30];
 
     public SimulationWidget(int simulationIdx, Simulation simulation) {
         this.simulation = simulation;
@@ -83,12 +84,13 @@ public class SimulationWidget implements Widget {
 
             Vec2 graphSize = new Vec2(200, 50);
 
-            int aliveScaleMax = 3, childrenScaleMax = 3, bushScaleMax = 3, energyScaleMax = 3;
+            int aliveScaleMax = 3, childrenScaleMax = 3, bushScaleMax = 3, energyScaleMax = 3, deathAgeMax = 3;
             for (int i = 0; i < aliveHist.length; i++) {
                 aliveScaleMax = (int) Math.max(aliveScaleMax, aliveHist[i]);
                 childrenScaleMax = (int) Math.max(childrenScaleMax, childrenHist[i]);
                 bushScaleMax = (int) Math.max(bushScaleMax, bushHist[i]);
                 energyScaleMax = (int) Math.max(energyScaleMax, energyHist[i]);
+                deathAgeMax = (int) Math.max(deathAgeMax, deathAgeHist[i]);
             }
 
             String text;
@@ -113,6 +115,10 @@ public class SimulationWidget implements Widget {
             valuef = statisticsSystem != null ? statisticsSystem.getEnergyAverage() : -1.0f;
             text = String.format("Energy: %.2f", valuef);
             ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
+
+            valuef = statisticsSystem != null ? statisticsSystem.getDeathAgeAverage() : -1.0f;
+            text = String.format("Death age: %.2f", valuef);
+            ui.plotLines(text, deathAgeHist, 0, "", 0, deathAgeMax, graphSize, 1);
 
             value = simulation.getWorld().getEpoch();
             ui.text("Epoch: %d", value);
@@ -201,6 +207,9 @@ public class SimulationWidget implements Widget {
 
                     System.arraycopy(ageHist, 1, ageHist, 0, ageHist.length - 1);
                     ageHist[ageHist.length - 1] = statisticsSystem.getAgeAverage();
+
+                    System.arraycopy(deathAgeHist, 1, deathAgeHist, 0, deathAgeHist.length - 1);
+                    deathAgeHist[deathAgeHist.length - 1] = statisticsSystem.getDeathAgeAverage();
                 }
             }
         }

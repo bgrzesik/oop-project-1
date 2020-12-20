@@ -1,17 +1,22 @@
 package project1.visitors;
 
 import project1.Simulation;
+import project1.actors.AbstractWorldActor;
 import project1.actors.Animal;
 import project1.actors.Bush;
+import project1.actors.WorldActor;
+import project1.listeners.DeathListener;
 import project1.tick.TickListener;
 import project1.world.World;
 
-public class StatisticsSystem implements WorldActorVisitor, TickListener {
+public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener {
     private int aliveAnimalsCount;
     private int presentBushCount;
     private int childrenSum;
     private int energySum;
     private int ageSum;
+    private int deadAgeSum = 0;
+    private int deadCount = 0;
 
     private final int[] genes = new int[8];
 
@@ -29,7 +34,7 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener {
         }
 
         World world = simulation.getWorld();
-       world.accept(this);
+        world.accept(this);
     }
 
     @Override
@@ -81,7 +86,26 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener {
         return childrenSum / (float) aliveAnimalsCount;
     }
 
+    public float getDeathAgeAverage() {
+        if (deadCount == 0) {
+            return 0;
+        }
+        return deadAgeSum / (float) deadCount;
+    }
+
     public int[] getGenes() {
         return genes;
+    }
+
+    @Override
+    public void dead(WorldActor actor) {
+        if (!(actor instanceof Animal)) {
+            return;
+        }
+
+        Animal animal = (Animal) actor;
+
+        deadAgeSum += animal.getAge();
+        deadCount++;
     }
 }

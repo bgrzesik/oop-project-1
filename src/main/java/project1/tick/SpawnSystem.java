@@ -4,6 +4,7 @@ import glm_.vec2.Vec2i;
 import project1.Simulation;
 import project1.actors.Bush;
 import project1.data.SimulationConfig;
+import project1.listeners.SpawnListener;
 import project1.world.Cell;
 import project1.world.World;
 
@@ -11,8 +12,7 @@ import java.util.*;
 
 public class SpawnSystem implements TickListener {
     private final Random random = new Random(42);
-
-    private int bushCount = 0;
+    private final List<SpawnListener> listeners = new ArrayList<>();
 
     @Override
     public void tick(Simulation simulation) {
@@ -40,25 +40,20 @@ public class SpawnSystem implements TickListener {
 
 
         int n = Math.min(config.getSpawnOutsideJungle(), freePlainsSpots.size());
-        spawnBushesFromSpots(freePlainsSpots, config, world, n);
+        spawnBushesFromSpots(freePlainsSpots, config, n);
 
         n = Math.min(config.getSpawnInJungle(), freeJungleSpots.size());
-        spawnBushesFromSpots(freeJungleSpots, config, world, n);
+        spawnBushesFromSpots(freeJungleSpots, config, n);
     }
 
-    private void spawnBushesFromSpots(List<Vec2i> freeJungleSpots, SimulationConfig config, World world, int n) {
+    private void spawnBushesFromSpots(List<Vec2i> freeJungleSpots, SimulationConfig config, int n) {
         for (int i = 0; i < n; i++) {
             Vec2i spot = freeJungleSpots.remove(random.nextInt(freeJungleSpots.size()));
             int bushEnergy = config.getSpawnBushEnergy();
 
             Bush bush = new Bush(spot.getX(), spot.getY(), bushEnergy);
-            world.addActor(bush);
-            this.bushCount++;
+            listeners.forEach(l -> l.onSpawn(bush));
         }
-    }
-
-    public int getBushCount() {
-        return bushCount;
     }
 
     public boolean inJungle(int x, int y, SimulationConfig config) {
@@ -69,6 +64,15 @@ public class SpawnSystem implements TickListener {
 
         return left <= x && x <= right &&
                 bottom <= y && y <= top;
+    }
+
+
+    public void addSpawnListener(SpawnListener listener) {
+        listeners.add(listener);
+    }
+
+    public void  removeSpawnListener(SpawnListener listener) {
+        listeners.remove(listener);
     }
 
 

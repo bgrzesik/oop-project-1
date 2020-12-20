@@ -47,10 +47,6 @@ public class SimulationWidget implements Widget {
     public void render(ImGui ui) {
         StatisticsSystem statisticsSystem = this.simulation
                 .getTickListener(StatisticsSystem.class);
-        DeathSystem deathSystem = this.simulation
-                .getTickListener(DeathSystem.class);
-        SpawnSystem spawnSystem = this.simulation
-                .getTickListener(SpawnSystem.class);
 
         ui.begin("Simulation #" + simulationIdx, new boolean[]{false}, 0);
         ui.setWindowSize(new Vec2(700, 950), Cond.Once);
@@ -94,42 +90,32 @@ public class SimulationWidget implements Widget {
             }
 
             String text;
-            int value;
 
             if (statisticsSystem != null) {
-                value = statisticsSystem.getAliveAnimalsCount();
-                text = String.format("Alive: %d", value);
+                text = String.format("Alive: %d", statisticsSystem.getAliveAnimalsCount());
                 ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
 
-                value = statisticsSystem.getPresentBushCount();
-                text = String.format("Bush: %d", value);
+                text = String.format("Bush: %d", statisticsSystem.getPresentBushCount());
                 ui.plotLines(text, bushHist, 0, "", 0, bushScaleMax, graphSize, 1);
 
-                float valuef = statisticsSystem.getChildrenAverage();
-                text = String.format("Children: %.2f", valuef);
+                text = String.format("Children: %.2f", statisticsSystem.getChildrenAverage());
                 ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
 
-                valuef = statisticsSystem.getAgeAverage();
-                text = String.format("Age: %.2f", valuef);
+                text = String.format("Age: %.2f", statisticsSystem.getAgeAverage());
                 ui.plotLines(text, ageHist, 0, "", 40, childrenScaleMax, graphSize, 1);
 
-                valuef = statisticsSystem.getEnergyAverage();
-                text = String.format("Energy: %.2f", valuef);
+                text = String.format("Energy: %.2f", statisticsSystem.getEnergyAverage());
                 ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
 
-                valuef = statisticsSystem.getDeathAgeAverage();
-                text = String.format("Death age: %.2f", valuef);
+                text = String.format("Death age: %.2f", statisticsSystem.getDeathAgeAverage());
                 ui.plotLines(text, deathAgeHist, 0, "", 0, deathAgeMax, graphSize, 1);
 
-                value = simulation.getWorld().getEpoch();
-                ui.text("Epoch: %d", value);
+                ui.text("Epoch: %d", simulation.getWorld().getEpoch());
 
-                value = statisticsSystem.getDeadCount();
-                ui.text("Dead: %d", value);
+                ui.text("Dead: %d", statisticsSystem.getDeadCount());
 
+                ui.text("Bushes total: %d", statisticsSystem.getBushCount());
             }
-            value = spawnSystem != null ? spawnSystem.getBushCount() : -1;
-            ui.text("Bushes total: %d", value);
 
             float[] genes = new float[8];
             if (statisticsSystem != null && statisticsSystem.getAliveAnimalsCount() != 0) {

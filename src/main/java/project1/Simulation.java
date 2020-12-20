@@ -1,9 +1,7 @@
 package project1;
 
 import project1.data.SimulationConfig;
-import project1.listeners.BreedingSystem;
-import project1.listeners.DeathListener;
-import project1.listeners.FeedingSystem;
+import project1.listeners.*;
 import project1.tick.CollisionSystem;
 import project1.tick.SpawnSystem;
 import project1.tick.TickListener;
@@ -53,27 +51,33 @@ public class Simulation {
 
     public static Simulation create(SimulationConfig config) {
         Simulation simulation = new Simulation(config);
+        World world = simulation.getWorld();
+
+        StatisticsSystem statisticsSystem = null;
 
         if (config.isSpawnSystemOn()) {
-            simulation.addTickListeners(new SpawnSystem());
+            SpawnSystem spawnSystem = new SpawnSystem();
+            simulation.addTickListeners(spawnSystem);
+            spawnSystem.addSpawnListener(new WorldSpawnListener(world));
         }
 
         if (config.isMoveSystemOn()) {
             simulation.addTickListeners(new MoveSystem());
         }
 
-        if (config.isDeathSystemOn()) {
-            simulation.addTickListeners(new DeathSystem());
-        }
-
         if (config.isStatisticsSystemOn()) {
-            simulation.addTickListeners(new StatisticsSystem());
+            statisticsSystem = new StatisticsSystem();
+            simulation.addTickListeners(statisticsSystem);
         }
 
-        if (config.isDeathSystemOn() && config.isStatisticsSystemOn()) {
-            StatisticsSystem statisticsSystem = simulation.getTickListener(StatisticsSystem.class);
-            simulation.getTickListener(DeathSystem.class)
-                      .addDeathListener(statisticsSystem);
+        if (config.isDeathSystemOn()) {
+            DeathSystem deathSystem = new DeathSystem();
+            simulation.addTickListeners(deathSystem);
+            deathSystem.addDeathListener(new WorldDeathListener(world));
+
+            if (config.isStatisticsSystemOn()) {
+                deathSystem.addDeathListener(statisticsSystem);
+            }
         }
 
         if (config.isBreedingSystemOn() || config.isFeedingSystemOn()) {

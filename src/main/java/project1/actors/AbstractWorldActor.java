@@ -10,22 +10,10 @@ public abstract class AbstractWorldActor implements WorldActor {
     protected int y;
     protected int energy;
 
-    private List<DeathListener> deathListeners = new ArrayList<>();
-
     public AbstractWorldActor(int x, int y, int energy) {
         this.x = x;
         this.y = y;
         this.energy = energy;
-    }
-
-    @Override
-    public void addDeathListener(DeathListener listener) {
-        deathListeners.add(listener);
-    }
-
-    @Override
-    public void removeDeathListener(DeathListener listener) {
-        deathListeners.remove(listener);
     }
 
     @Override
@@ -57,10 +45,5 @@ public abstract class AbstractWorldActor implements WorldActor {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public void kill() {
-        deathListeners.forEach(l -> l.dead(this));
-        deathListeners.clear();
     }
 }

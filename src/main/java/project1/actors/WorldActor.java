@@ -9,10 +9,6 @@ public interface WorldActor {
 
     void accept(WorldActorVisitor visitor);
 
-    void addDeathListener(DeathListener listener);
-
-    void removeDeathListener(DeathListener listener);
-
     int getX();
 
     int getY();

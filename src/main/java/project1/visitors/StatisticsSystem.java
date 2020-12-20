@@ -6,10 +6,11 @@ import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;
 import project1.listeners.DeathListener;
+import project1.listeners.SpawnListener;
 import project1.tick.TickListener;
 import project1.world.World;
 
-public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener {
+public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener, SpawnListener {
     private int aliveAnimalsCount;
     private int presentBushCount;
     private int childrenSum;
@@ -19,6 +20,7 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
     private int deadCount = 0;
 
     private final int[] genes = new int[8];
+    private int bushCount = 0;
 
 
     @Override
@@ -101,6 +103,10 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
         return deadCount;
     }
 
+    public int getBushCount() {
+        return bushCount;
+    }
+
     @Override
     public void dead(WorldActor actor) {
         if (!(actor instanceof Animal)) {
@@ -111,5 +117,10 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
 
         deadAgeSum += animal.getAge();
         deadCount++;
+    }
+
+    @Override
+    public void onSpawn(Bush bush) {
+        this.bushCount++;
     }
 }

@@ -3,7 +3,6 @@ package project1.world;
 import project1.Simulation;
 import project1.actors.WorldActor;
 import project1.listeners.MoveObservable;
-import project1.listeners.WorldDeathListener;
 import project1.listeners.WorldMoveObserver;
 import project1.tick.TickListener;
 import project1.visitors.WorldActorVisitor;
@@ -20,12 +19,10 @@ public class World implements TickListener {
     private final Set<WorldActor> actors = new HashSet<>();
     private Set<WorldActor> pendingRemoval;
 
-    private WorldDeathListener deathListener;
 
     public World(int width, int height) {
         this.width = width;
         this.height = height;
-        this.deathListener = new WorldDeathListener(this);
         this.cells = new Cell[width][height];
 
         for (int x = 0; x < width; x++) {
@@ -48,8 +45,6 @@ public class World implements TickListener {
             ((MoveObservable) actor)
                     .addMoveObserver(new WorldMoveObserver(this, actor));
         }
-
-        actor.addDeathListener(deathListener);
     }
 
 

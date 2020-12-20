@@ -3,6 +3,7 @@ package project1.gui;
 import glm_.vec2.Vec2;
 import imgui.ImGui;
 import imgui.MutableProperty0;
+import imgui.PopupFlag;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -32,8 +33,18 @@ public class AddActorWidget implements Widget {
         }
         ui.columns(16, "Genes", false);
         for (int i = 0; i < 32; i++) {
-            if (ui.smallButton(String.valueOf(genes[i]))) {
+            if (ui.button(String.valueOf(genes[i]), new Vec2(20, 20))) {
                 genes[i] = (genes[i] + 1) % 8;
+            }
+            if (ui.beginPopupContextItem("", PopupFlag.MouseButtonRight.i)) {
+                for (int j = 0; j < 8; j++) {
+                    if (ui.button(String.valueOf(j), new Vec2(20, 20))) {
+                        genes[i] = j;
+                        ui.closeCurrentPopup();
+                    }
+                    ui.sameLine(0, 5);
+                }
+                ui.endPopup();
             }
             ui.pushID(i);
             ui.nextColumn();

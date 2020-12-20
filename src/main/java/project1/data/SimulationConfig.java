@@ -1,5 +1,12 @@
 package project1.data;
 
+
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
+
+import java.util.Objects;
+
 public class SimulationConfig {
     private int minimalBreedEnergy = 20;
     private int spawnBushEnergy = 10;
@@ -86,8 +93,19 @@ public class SimulationConfig {
         return statisticsSystemOn;
     }
 
+    public void saveToFile(FileHandle file) {
+        Json json = new Json(JsonWriter.OutputType.json);
+        json.toJson(this, file);
+    }
+
     public static class Builder {
-        private final SimulationConfig config = new SimulationConfig();
+        private SimulationConfig config = new SimulationConfig();
+
+        public Builder fromFile(FileHandle file) {
+            Json json = new Json(JsonWriter.OutputType.json);
+            config = Objects.requireNonNull(json.fromJson(SimulationConfig.class, file));
+            return this;
+        }
 
         public Builder setMinimalBreedEnergy(int minimalBreedEnergy) {
             this.config.minimalBreedEnergy = minimalBreedEnergy;
@@ -169,6 +187,11 @@ public class SimulationConfig {
             return this;
         }
 
+        public Builder loadDefault() {
+            this.config = new SimulationConfig();
+            return this;
+        }
+
         public Builder noSystems() {
             return this.setSpawnSystemOn(false)
                     .setBreedingSystemOn(false)
@@ -181,6 +204,7 @@ public class SimulationConfig {
         public SimulationConfig build() {
             return this.config;
         }
+
     }
 
 }

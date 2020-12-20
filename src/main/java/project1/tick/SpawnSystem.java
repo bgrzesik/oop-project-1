@@ -8,11 +8,6 @@ import project1.world.World;
 import java.util.Random;
 
 public class SpawnSystem implements TickListener {
-//    public static final int JUNGLE_TOP = 20;
-//    public static final int JUNGLE_RIGHT = 55;
-//    public static final int JUNGLE_BOTTOM = 10;
-//    public static final int JUNGLE_LEFT = 45;
-
     private final Random random = new Random(42);
 
     private int bushCount = 0;

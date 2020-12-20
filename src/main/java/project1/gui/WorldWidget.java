@@ -15,22 +15,12 @@ import project1.visitors.WorldActorVisitorAdapter;
 import project1.world.World;
 
 public class WorldWidget implements Widget {
-//    public static final int ANIMAL_COLOR = 0xff1111ee;
-//    public static final int BUSH_COLOR = 0xff026e00;
-//    public static final int LINE_COLOR = 0x22000000;
-//    public static final int WORLD_COLOR = 0xff74e8de;
-//    public static final int JUNGLE_COLOR = 0xff00bbaa;
-
     public static final int LINE_COLOR = 0x22000000;
     public static final int WORLD_COLOR = 0xffbbffbb;
     public static final int JUNGLE_COLOR = 0xff77ff77;
     public static final String ANIMAL_TEXTURE = "Animal.png";
     public static final String BUSH_TEXTURE = "Bush.png";
 
-//    public static final int WORLD_COLOR = 0xffffffff;j
-//    public static final int JUNGLE_COLOR = 0xffbbffbb;
-//    public static final String ANIMAL_TEXTURE = "Animal.png";
-//    public static final String BUSH_TEXTURE = "Bush.png";
 
     public Texture animalTexture;
     public Texture bushTexture;

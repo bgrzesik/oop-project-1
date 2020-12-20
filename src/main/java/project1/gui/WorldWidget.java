@@ -24,8 +24,8 @@ public class WorldWidget implements Widget {
     public static final int LINE_COLOR = 0x22000000;
     public static final int WORLD_COLOR = 0xffbbffbb;
     public static final int JUNGLE_COLOR = 0xff77ff77;
-    public static final String ANIMAL_TEXTURE = "Animal3.png";
-    public static final String BUSH_TEXTURE = "Bush3.png";
+    public static final String ANIMAL_TEXTURE = "Animal.png";
+    public static final String BUSH_TEXTURE = "Bush.png";
 
 //    public static final int WORLD_COLOR = 0xffffffff;j
 //    public static final int JUNGLE_COLOR = 0xffbbffbb;

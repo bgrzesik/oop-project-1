@@ -94,7 +94,8 @@
         <dependency>
             <groupId>com.github.kotlin-graphics</groupId>
             <artifactId>imgui</artifactId>
-            <version>1.79</version>
+<!--            <version>1.79</version>-->
+            <version>-13cd0e7ea9-1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.twelvemonkeys.imageio</groupId>

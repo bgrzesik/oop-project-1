@@ -22,12 +22,9 @@ import uno.glfw.GlfwWindow;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -197,6 +194,8 @@ public class SimApplication extends ApplicationAdapter {
     }
 
     public static void main(String[] args) {
+        imgui.ImguiKt.DEBUG = false;
+
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.useOpenGL3(true, 3, 3);
         config.setIdleFPS(60);

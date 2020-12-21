@@ -3,6 +3,7 @@ package project1.gui;
 import com.badlogic.gdx.Gdx;
 import glm_.vec2.Vec2;
 import imgui.*;
+import imgui.internal.sections.ButtonFlag;
 import kotlin.reflect.KMutableProperty0;
 import project1.Simulation;
 import project1.actors.Animal;
@@ -13,6 +14,8 @@ import project1.world.World;
 import java.util.Random;
 
 public class SimulationWidget implements Widget {
+    public static final float MIN_TIME_SPEED = 1.0f / 16.0f;
+    public static final int MAX_TIME_SPEED = 64;
     private Simulation simulation;
     private WorldWidget worldWidget;
     private AddActorWidget addActorWidget = new AddActorWidget();
@@ -52,7 +55,7 @@ public class SimulationWidget implements Widget {
 
         if (ui.collapsingHeader("Time control", 0)) {
             ui.text("Speed: %.2f", speed);
-            if (ui.button("<<", new Vec2(0, 0))) {
+            if (ui.buttonEx("<<", new Vec2(0, 0), speed > MIN_TIME_SPEED ? 0 : ButtonFlag.Disabled.getI())) {
                 speed /= 2;
             }
             ui.sameLine(0, 5);
@@ -60,7 +63,7 @@ public class SimulationWidget implements Widget {
                 speed = 1.0f;
             }
             ui.sameLine(0, 5);
-            if (ui.button(">>", new Vec2(0, 0))) {
+            if (ui.buttonEx(">>", new Vec2(0, 0), speed < MAX_TIME_SPEED ? 0 : ButtonFlag.Disabled.getI())) {
                 speed *= 2;
             }
 

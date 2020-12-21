@@ -3,7 +3,7 @@ package project1.data;
 /**
  * Regular POJO to export to json.
  */
-public class Statistics {
+public class Statistics2 {
 
     private int aliveAnimalsCount = 0;
     private int presentBushCount = 0;

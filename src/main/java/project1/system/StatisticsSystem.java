@@ -5,7 +5,6 @@ import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;
 import project1.data.GenomeFrequency;
-import project1.data.Statistics;
 import project1.listeners.DeathListener;
 import project1.listeners.SpawnListener;
 import project1.tick.TickListener;
@@ -15,34 +14,22 @@ import project1.world.World;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener, SpawnListener {
-    private int aliveAnimalsCount;
-    private int presentBushCount;
-    private int childrenSum;
-    private int energySum;
-    private int ageSum;
-    private int deadAgeSum = 0;
-    private int deadCount = 0;
-
-    private final int[] genes = new int[8];
-    private int bushCount = 0;
-
-    private Map<String, GenomeFrequency> genomes = new TreeMap<>();
-
+public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener {
+    private Statistics stat = new Statistics();
 
     @Override
     public void tick(Simulation simulation) {
-        this.aliveAnimalsCount = 0;
-        this.presentBushCount = 0;
-        this.childrenSum = 0;
-        this.energySum = 0;
-        this.ageSum = 0;
-
-        this.genomes.clear();
+        stat.aliveAnimalsCount = 0;
+        stat.presentBushCount = 0;
+        stat.childrenSum = 0;
+        stat.energySum = 0;
+        stat.ageSum = 0;
 
         for (int i = 0; i < 8; i++) {
-            genes[i] = 0;
+            stat.genes[i] = 0;
         }
+
+        stat.genomes.clear();
 
         World world = simulation.getWorld();
         world.accept(this);
@@ -50,113 +37,57 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
 
     @Override
     public void visitBush(Bush bush) {
-        this.presentBushCount++;
+        stat.presentBushCount++;
     }
 
     @Override
     public void visitAnimal(Animal animal) {
         animal.age();
 
-        this.aliveAnimalsCount++;
-        this.childrenSum += animal.getChildrenCount();
-        this.energySum += animal.getEnergy();
-        this.ageSum += animal.getAge();
+        stat.aliveAnimalsCount++;
+        stat.childrenSum += animal.getChildrenCount();
+        stat.energySum += animal.getEnergy();
+        stat.ageSum += animal.getAge();
 
         String genome = animal.getGenome();
-        this.genomes.computeIfAbsent(genome, GenomeFrequency::new)
+        stat.genomes.computeIfAbsent(genome, GenomeFrequency::new)
                     .incrementFrequency();
 
         for (int gene : animal.getGenes()) {
-            this.genes[gene] += 1;
+            stat.genes[gene] += 1;
         }
 
     }
 
     @Override
     public void dead(WorldActor actor) {
-        if (!(actor instanceof Animal)) {
-            return;
+        if (actor instanceof Animal) {
+            Animal animal = (Animal) actor;
+
+            for (int gene : animal.getGenes()) {
+                stat.deadGenes[gene] += 1;
+            }
+
+            stat.deadChildrenSum += animal.getChildrenCount();
+            stat.deadEnergySum += animal.getEnergy(); // should be always zero
+            stat.deadAgeSum += animal.getAge();
+            stat.deadCount++;
+
+            String genome = animal.getGenome();
+            stat.deadGenomes.computeIfAbsent(genome, GenomeFrequency::new)
+                            .incrementFrequency();
+
+        } else if (actor instanceof Bush) {
+            stat.eatenCount++;
         }
-
-        Animal animal = (Animal) actor;
-
-        deadAgeSum += animal.getAge();
-        deadCount++;
     }
 
-    @Override
-    public void onSpawn(Bush bush) {
-        this.bushCount++;
-    }
 
-    public Statistics exportStatistics() {
-        Statistics stat = new Statistics();
-        stat.setAliveAnimalsCount(this.aliveAnimalsCount);
-        stat.setPresentBushCount(this.presentBushCount);
-        stat.setChildrenSum(this.childrenSum);
-        stat.setEnergySum(this.energySum);
-        stat.setAgeSum(this.ageSum);
-        stat.setDeadAgeSum(this.deadAgeSum);
-        stat.setDeadCount(this.deadCount);
-        stat.setGenes(this.genes);
-        stat.setBushCount(this.bushCount);
-        stat.setEnergyAverage(this.getEnergyAverage());
-        stat.setAgeAverage(this.getAgeAverage());
-        stat.setChildrenAverage(this.getChildrenAverage());
-        stat.setDeathAgeAverage(this.getDeathAgeAverage());
+    public Statistics getCurrentStatistics() {
         return stat;
     }
 
-    public Map<String, GenomeFrequency> getGenomeFrequency() {
-        return genomes;
+    public Statistics exportStatistics() {
+        return (Statistics) stat.clone();
     }
-
-    public int getAliveAnimalsCount() {
-        return aliveAnimalsCount;
-    }
-
-    public int getPresentBushCount() {
-        return presentBushCount;
-    }
-
-    public float getEnergyAverage() {
-        if (aliveAnimalsCount == 0) {
-            return 0;
-        }
-        return energySum / (float) aliveAnimalsCount;
-    }
-
-    public float getAgeAverage() {
-        if (aliveAnimalsCount == 0) {
-            return 0;
-        }
-        return ageSum / (float) aliveAnimalsCount;
-    }
-
-    public float getChildrenAverage() {
-        if (aliveAnimalsCount == 0) {
-            return 0;
-        }
-        return childrenSum / (float) aliveAnimalsCount;
-    }
-
-    public float getDeathAgeAverage() {
-        if (deadCount == 0) {
-            return 0;
-        }
-        return deadAgeSum / (float) deadCount;
-    }
-
-    public int[] getGenes() {
-        return genes;
-    }
-
-    public int getDeadCount() {
-        return deadCount;
-    }
-
-    public int getBushCount() {
-        return bushCount;
-    }
-
 }

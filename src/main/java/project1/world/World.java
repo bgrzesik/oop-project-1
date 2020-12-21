@@ -6,7 +6,9 @@ import project1.listeners.MoveObservable;
 import project1.tick.TickListener;
 import project1.visitors.WorldActorVisitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class World implements TickListener {
@@ -17,6 +19,7 @@ public class World implements TickListener {
     private final Cell[][] cells;
     private final Set<WorldActor> actors = new HashSet<>();
     private Set<WorldActor> pendingRemoval;
+    private List<WorldActorListener> listeners = new ArrayList<>();
 
 
     public World(int width, int height) {
@@ -44,6 +47,8 @@ public class World implements TickListener {
             ((MoveObservable) actor)
                     .addMoveObserver(new WorldMoveObserver(this, actor));
         }
+
+        listeners.forEach(l -> l.addActor(actor));
     }
 
 
@@ -54,6 +59,7 @@ public class World implements TickListener {
             } else {
                 actors.remove(actor);
                 cells[actor.getX()][actor.getY()].removeActor(actor);
+                listeners.forEach(l -> l.removeActor(actor));
             }
         }
     }
@@ -81,6 +87,7 @@ public class World implements TickListener {
         synchronized (this) {
             for (WorldActor actor : pendingRemoval) {
                 cells[actor.getX()][actor.getY()].removeActor(actor);
+                listeners.forEach(l -> l.removeActor(actor));
             }
             actors.removeAll(pendingRemoval);
             pendingRemoval = null;
@@ -89,5 +96,13 @@ public class World implements TickListener {
 
     public int getEpoch() {
         return epoch;
+    }
+
+    public void addListener(WorldActorListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(WorldActorListener listener) {
+        listeners.remove(listener);
     }
 }

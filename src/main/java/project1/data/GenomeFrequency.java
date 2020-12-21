@@ -4,10 +4,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class GenomeFrequency implements Comparable<GenomeFrequency> {
     private final String genome;
-    private int frequency = 0;
+    private int frequency;
 
     public GenomeFrequency(String genome) {
+        this(genome, 0);
+    }
+
+    public GenomeFrequency(String genome, int frequency) {
         this.genome = genome;
+        this.frequency = frequency;
     }
 
     public String getGenome() {

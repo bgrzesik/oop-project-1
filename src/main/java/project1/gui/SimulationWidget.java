@@ -9,6 +9,7 @@ import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.data.GenomeFrequency;
+import project1.system.Statistics;
 import project1.system.StatisticsSystem;
 import project1.world.World;
 
@@ -58,6 +59,9 @@ public class SimulationWidget implements Widget {
         StatisticsSystem statisticsSystem = this.simulation
                 .getTickListener(StatisticsSystem.class);
 
+        Statistics statistics = statisticsSystem != null ?
+                statisticsSystem.getCurrentStatistics() : null;
+
         ui.begin("Simulation #" + simulationIdx, new boolean[]{false}, 0);
         ui.setWindowSize(new Vec2(700, 950), Cond.Once);
 
@@ -65,7 +69,8 @@ public class SimulationWidget implements Widget {
 
         if (ui.collapsingHeader("Time control", 0)) {
             ui.text("Speed: %.2f", speed);
-            if (ui.buttonEx("<<", new Vec2(0, 0), speed > MIN_TIME_SPEED ? 0 : ButtonFlag.Disabled.getI())) {
+            if (ui.buttonEx("<<", new Vec2(0, 0), speed > MIN_TIME_SPEED ? 0 : ButtonFlag.Disabled
+                    .getI())) {
                 speed /= 2;
             }
             ui.sameLine(0, 5);
@@ -73,7 +78,8 @@ public class SimulationWidget implements Widget {
                 speed = 1.0f;
             }
             ui.sameLine(0, 5);
-            if (ui.buttonEx(">>", new Vec2(0, 0), speed < MAX_TIME_SPEED ? 0 : ButtonFlag.Disabled.getI())) {
+            if (ui.buttonEx(">>", new Vec2(0, 0), speed < MAX_TIME_SPEED ? 0 : ButtonFlag.Disabled
+                    .getI())) {
                 speed *= 2;
             }
 
@@ -120,35 +126,35 @@ public class SimulationWidget implements Widget {
 
             String text;
 
-            text = String.format("Alive: %d", statisticsSystem.getAliveAnimalsCount());
+            text = String.format("Alive: %d", statistics.getAliveAnimalsCount());
             ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
 
-            text = String.format("Bush: %d", statisticsSystem.getPresentBushCount());
+            text = String.format("Bush: %d", statistics.getPresentBushCount());
             ui.plotLines(text, bushHist, 0, "", 0, bushScaleMax, graphSize, 1);
 
-            text = String.format("Children: %.2f", statisticsSystem.getChildrenAverage());
+            text = String.format("Children: %.2f", statistics.getChildrenAverage());
             ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
 
-            text = String.format("Age: %.2f", statisticsSystem.getAgeAverage());
+            text = String.format("Age: %.2f", statistics.getAgeAverage());
             ui.plotLines(text, ageHist, 0, "", 40, childrenScaleMax, graphSize, 1);
 
-            text = String.format("Energy: %.2f", statisticsSystem.getEnergyAverage());
+            text = String.format("Energy: %.2f", statistics.getEnergyAverage());
             ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
 
-            text = String.format("Death age: %.2f", statisticsSystem.getDeathAgeAverage());
+            text = String.format("Death age: %.2f", statistics.getDeathAgeAverage());
             ui.plotLines(text, deathAgeHist, 0, "", 0, deathAgeMax, graphSize, 1);
 
             ui.text("Epoch: %d", simulation.getWorld().getEpoch());
 
-            ui.text("Dead: %d", statisticsSystem.getDeadCount());
+            ui.text("Dead: %d", statistics.getDeadCount());
 
-            ui.text("Bushes total: %d", statisticsSystem.getBushCount());
+            ui.text("Bushes total: %d", statistics.getTotalBushCount());
 
             float[] genes = new float[8];
-            if (statisticsSystem.getAliveAnimalsCount() != 0) {
+            if (statistics.getAliveAnimalsCount() != 0) {
                 for (int i = 0; i < 8; i++) {
-                    genes[i] = statisticsSystem.getGenes()[i] /
-                            (float) statisticsSystem.getAliveAnimalsCount() / 8.0f;
+                    genes[i] = statistics.getGenes()[i] /
+                            (float) statistics.getAliveAnimalsCount() / 8.0f;
                 }
             }
             ui.plotHistogram("Genes", genes, 0, "", 0.0f, 1.0f, new Vec2(100, 100), 1);
@@ -156,7 +162,7 @@ public class SimulationWidget implements Widget {
             if (ui.collapsingHeader("Genomes", 0)) {
                 ui.columns(2, "", true);
 
-                Map<String, GenomeFrequency> genomes = statisticsSystem.getGenomeFrequency();
+                Map<String, GenomeFrequency> genomes = statistics.getGenomeFrequency();
                 TreeSet<GenomeFrequency> frequencies = new TreeSet<>(genomes.values());
 
                 for (GenomeFrequency frequency : frequencies) {
@@ -238,22 +244,22 @@ public class SimulationWidget implements Widget {
 
                 if (statisticsSystem != null) {
                     System.arraycopy(aliveHist, 1, aliveHist, 0, aliveHist.length - 1);
-                    aliveHist[aliveHist.length - 1] = statisticsSystem.getAliveAnimalsCount();
+                    aliveHist[aliveHist.length - 1] = statistics.getAliveAnimalsCount();
 
                     System.arraycopy(childrenHist, 1, childrenHist, 0, childrenHist.length - 1);
-                    childrenHist[childrenHist.length - 1] = statisticsSystem.getChildrenAverage();
+                    childrenHist[childrenHist.length - 1] = statistics.getChildrenAverage();
 
                     System.arraycopy(bushHist, 1, bushHist, 0, bushHist.length - 1);
-                    bushHist[bushHist.length - 1] = statisticsSystem.getPresentBushCount();
+                    bushHist[bushHist.length - 1] = statistics.getPresentBushCount();
 
                     System.arraycopy(energyHist, 1, energyHist, 0, energyHist.length - 1);
-                    energyHist[energyHist.length - 1] = statisticsSystem.getEnergyAverage();
+                    energyHist[energyHist.length - 1] = statistics.getEnergyAverage();
 
                     System.arraycopy(ageHist, 1, ageHist, 0, ageHist.length - 1);
-                    ageHist[ageHist.length - 1] = statisticsSystem.getAgeAverage();
+                    ageHist[ageHist.length - 1] = statistics.getAgeAverage();
 
                     System.arraycopy(deathAgeHist, 1, deathAgeHist, 0, deathAgeHist.length - 1);
-                    deathAgeHist[deathAgeHist.length - 1] = statisticsSystem.getDeathAgeAverage();
+                    deathAgeHist[deathAgeHist.length - 1] = statistics.getDeathAgeAverage();
                 }
             }
         }

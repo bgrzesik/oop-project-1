@@ -214,4 +214,9 @@ public class SimulationWidget implements Widget {
     public boolean showLines() {
         return showLines[0];
     }
+
+
+    public Simulation getSimulation() {
+        return simulation;
+    }
 }

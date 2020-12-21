@@ -3,6 +3,8 @@ package project1;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.*;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
 import glm_.vec2.Vec2;
 import glm_.vec2.Vec2i;
 import imgui.Cond;
@@ -15,9 +17,17 @@ import project1.data.SimulationConfig;
 import project1.gui.ImGuiLibGdxTranslator;
 import project1.gui.SimulationConfigWidget;
 import project1.gui.SimulationWidget;
+import project1.system.StatisticsSystem;
 import uno.glfw.GlfwWindow;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -46,7 +56,7 @@ public class SimApplication extends ApplicationAdapter {
         this.implGL3 = new ImplGL3();
         this.ui.styleColorsDark(null);
         this.ui.getStyle()
-                .setFrameRounding(6.0f);
+               .setFrameRounding(6.0f);
 
         Gdx.input.setInputProcessor(new ImGuiLibGdxTranslator());
         updateCallbacks();
@@ -82,6 +92,43 @@ public class SimApplication extends ApplicationAdapter {
                                                          "", false, true));
 
                     ui.endMenu();
+                }
+
+                if (ui.menuItem("Export statistics", "", false, true)) {
+                    String date = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+                    String file = String.format("Simulation statistics %s.conf.json", date);
+                    try {
+                        Writer fileWriter = Gdx.files.local(file).writer(false);
+
+                        Json json = new Json(JsonWriter.OutputType.json);
+                        json.setUsePrototypes(false);
+                        json.setWriter(fileWriter);
+                        json.writeArrayStart();
+                        for (SimulationWidget widget : simulationWidgets) {
+                            json.writeObjectStart();
+                            String name = String
+                                    .format("Simulation #%d", widget.getSimulationIdx());
+                            json.writeValue("name", name);
+
+                            StatisticsSystem statistics = widget.getSimulation()
+                                                                .getTickListener(StatisticsSystem.class);
+
+                            if (statistics != null) {
+                                json.writeValue("statistics", statistics.exportStatistics());
+                            } else {
+                                json.writeValue("statistics", (Object) null);
+                            }
+
+                            json.writeObjectEnd();
+                        }
+
+                        json.writeArrayEnd();
+
+
+                        fileWriter.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (ui.menuItem("Exit", "", false, true)) {

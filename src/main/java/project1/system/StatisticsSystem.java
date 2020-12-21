@@ -4,6 +4,7 @@ import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;
+import project1.data.Statistics;
 import project1.listeners.DeathListener;
 import project1.listeners.SpawnListener;
 import project1.tick.TickListener;
@@ -59,6 +60,41 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
 
     }
 
+    @Override
+    public void dead(WorldActor actor) {
+        if (!(actor instanceof Animal)) {
+            return;
+        }
+
+        Animal animal = (Animal) actor;
+
+        deadAgeSum += animal.getAge();
+        deadCount++;
+    }
+
+    @Override
+    public void onSpawn(Bush bush) {
+        this.bushCount++;
+    }
+
+    public Statistics exportStatistics() {
+        Statistics stat = new Statistics();
+        stat.setAliveAnimalsCount(this.aliveAnimalsCount);
+        stat.setPresentBushCount(this.presentBushCount);
+        stat.setChildrenSum(this.childrenSum);
+        stat.setEnergySum(this.energySum);
+        stat.setAgeSum(this.ageSum);
+        stat.setDeadAgeSum(this.deadAgeSum);
+        stat.setDeadCount(this.deadCount);
+        stat.setGenes(this.genes);
+        stat.setBushCount(this.bushCount);
+        stat.setEnergyAverage(this.getEnergyAverage());
+        stat.setAgeAverage(this.getAgeAverage());
+        stat.setChildrenAverage(this.getChildrenAverage());
+        stat.setDeathAgeAverage(this.getDeathAgeAverage());
+        return stat;
+    }
+
     public int getAliveAnimalsCount() {
         return aliveAnimalsCount;
     }
@@ -107,20 +143,4 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
         return bushCount;
     }
 
-    @Override
-    public void dead(WorldActor actor) {
-        if (!(actor instanceof Animal)) {
-            return;
-        }
-
-        Animal animal = (Animal) actor;
-
-        deadAgeSum += animal.getAge();
-        deadCount++;
-    }
-
-    @Override
-    public void onSpawn(Bush bush) {
-        this.bushCount++;
-    }
 }

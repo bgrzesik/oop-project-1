@@ -9,7 +9,7 @@ import project1.actors.WorldActor;
 import project1.world.World;
 
 public class ActorDetailsWidget implements Widget {
-    private boolean[] windowOpenPinned = new boolean[] {true};
+    private boolean[] windowOpenPinned = new boolean[]{true};
     private World world;
     private WorldActor pinned;
 
@@ -77,7 +77,14 @@ public class ActorDetailsWidget implements Widget {
                 ui.text("%d", animal.getBorn());
                 ui.nextColumn();
 
+                ui.bulletText("Died");
+                ui.nextColumn();
+                if (animal.pendingRemoval()) {
+                    ui.text("%d", animal.getBorn() + animal.getAge());
+                }
+                ui.nextColumn();
                 ui.bulletText("Age");
+
                 ui.nextColumn();
                 ui.text("%d", animal.getAge());
                 ui.nextColumn();
@@ -97,7 +104,6 @@ public class ActorDetailsWidget implements Widget {
 
 
                 ui.columns(1, "", false);
-//                ui.separator();
                 if (ui.treeNode(String.format("Children (%d)", animal.getChildrenCount()))) {
                     for (Animal child : animal.getChildren()) {
                         showActorDetails(ui, world, child, showPinned);

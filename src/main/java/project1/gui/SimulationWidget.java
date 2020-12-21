@@ -15,15 +15,20 @@ import java.util.Random;
 
 public class SimulationWidget implements Widget {
     public static final float MIN_TIME_SPEED = 1.0f / 16.0f;
-    public static final int MAX_TIME_SPEED = 64;
+    public static final float MAX_TIME_SPEED = 64;
+
+    public static final int PENDING_PAUSE = 0;
+    public static final int PENDING_INFINITE = -1;
+
     private Simulation simulation;
     private WorldWidget worldWidget;
     private AddActorWidget addActorWidget = new AddActorWidget();
     private KMutableProperty0<Integer> amount = new MutableProperty0<>(100);
+    private KMutableProperty0<Integer> cycles = new MutableProperty0<>(10);
     private float time = 0;
     private float speed = 1.0f;
 
-    private boolean simulate = false;
+    private int pendingCycles = 0;
     private boolean[] showLines = new boolean[]{false};
     private int simulationIdx;
 
@@ -67,12 +72,31 @@ public class SimulationWidget implements Widget {
                 speed *= 2;
             }
 
-            if (ui.button(simulate ? "Pause" : "Start", new Vec2(0, 0))) {
-                simulate = !simulate;
+            switch (pendingCycles) {
+                case PENDING_INFINITE:
+                    if (ui.button("Pause", new Vec2(0, 0))) {
+                        pendingCycles = PENDING_PAUSE;
+                    }
+                    break;
+                case PENDING_PAUSE:
+                    if (ui.button("Start", new Vec2(0, 0))) {
+                        pendingCycles = PENDING_INFINITE;
+                    }
+                    break;
+                default:
+                    ui.buttonEx("Running", new Vec2(0, 0), ButtonFlag.Disabled.getI());
+                    break;
             }
+
             ui.sameLine(0, 5);
             if (ui.button("Tick", new Vec2(0, 0))) {
                 simulation.tick();
+            }
+
+            ui.inputInt("", cycles, 1, 10, 0);
+            ui.sameLine(0, 5);
+            if (ui.button("Run Cycles", new Vec2(0, 0))) {
+                pendingCycles = cycles.get();
             }
         }
 
@@ -174,11 +198,15 @@ public class SimulationWidget implements Widget {
         }
         ui.end();
 
-        if (simulate) {
+        if (pendingCycles != PENDING_PAUSE) {
             time += Gdx.graphics.getDeltaTime();
             if (time > 1.0f / speed) {
                 this.simulation.tick();
                 time = 0.0f;
+
+                if (pendingCycles != PENDING_INFINITE) {
+                    pendingCycles--;
+                }
 
                 if (statisticsSystem != null) {
                     System.arraycopy(aliveHist, 1, aliveHist, 0, aliveHist.length - 1);

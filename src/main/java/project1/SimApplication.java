@@ -128,7 +128,7 @@ public class SimApplication extends ApplicationAdapter {
             simulationIdx += 1;
         }
 
-        ui.showDemoWindow(new boolean[]{true});
+//        ui.showDemoWindow(new boolean[]{true});
 
         ui.render();
 

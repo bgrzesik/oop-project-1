@@ -75,7 +75,7 @@ public class SimulationWidget implements Widget {
 
         if (ui.collapsingHeader("Statistics", 0)) {
 
-            Vec2 graphSize = new Vec2(200, 50);
+            Vec2 graphSize = new Vec2(300, 100);
 
             int aliveScaleMax = 3, childrenScaleMax = 3, bushScaleMax = 3, energyScaleMax = 3, deathAgeMax = 3;
             for (int i = 0; i < aliveHist.length; i++) {

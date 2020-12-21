@@ -64,6 +64,7 @@ public class SimulationConfigWidget implements Widget {
 
                     List<String> names = Arrays.stream(list)
                                                .map(FileHandle::nameWithoutExtension)
+                                               .filter(e -> e.endsWith(".conf"))
                                                .map(e -> e.substring(0, e.length() - 5))
                                                .collect(Collectors.toList());
                     names.add(0, "<New>");

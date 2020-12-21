@@ -95,40 +95,7 @@ public class SimApplication extends ApplicationAdapter {
                 }
 
                 if (ui.menuItem("Export statistics", "", false, true)) {
-                    String date = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
-                    String file = String.format("Simulation statistics %s.conf.json", date);
-                    try {
-                        Writer fileWriter = Gdx.files.local(file).writer(false);
-
-                        Json json = new Json(JsonWriter.OutputType.json);
-                        json.setUsePrototypes(false);
-                        json.setWriter(fileWriter);
-                        json.writeArrayStart();
-                        for (SimulationWidget widget : simulationWidgets) {
-                            json.writeObjectStart();
-                            String name = String
-                                    .format("Simulation #%d", widget.getSimulationIdx());
-                            json.writeValue("name", name);
-
-                            StatisticsSystem statistics = widget.getSimulation()
-                                                                .getTickListener(StatisticsSystem.class);
-
-                            if (statistics != null) {
-                                json.writeValue("statistics", statistics.exportStatistics());
-                            } else {
-                                json.writeValue("statistics", (Object) null);
-                            }
-
-                            json.writeObjectEnd();
-                        }
-
-                        json.writeArrayEnd();
-
-
-                        fileWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    exportStatistics();
                 }
 
                 if (ui.menuItem("Exit", "", false, true)) {
@@ -174,6 +141,43 @@ public class SimApplication extends ApplicationAdapter {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
         implGL3.renderDrawData(ui.getDrawData());
+    }
+
+    private void exportStatistics() {
+        String date = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
+        String file = String.format("Simulation statistics %s.stat.json", date);
+        try {
+            Writer fileWriter = Gdx.files.local(file).writer(false);
+
+            Json json = new Json(JsonWriter.OutputType.json);
+            json.setUsePrototypes(false);
+            json.setWriter(fileWriter);
+            json.writeArrayStart();
+            for (SimulationWidget widget : simulationWidgets) {
+                json.writeObjectStart();
+                String name = String
+                        .format("Simulation #%d", widget.getSimulationIdx());
+                json.writeValue("name", name);
+
+                StatisticsSystem statistics = widget.getSimulation()
+                                                    .getTickListener(StatisticsSystem.class);
+
+                if (statistics != null) {
+                    json.writeValue("statistics", statistics.exportStatistics());
+                } else {
+                    json.writeValue("statistics", (Object) null);
+                }
+
+                json.writeObjectEnd();
+            }
+
+            json.writeArrayEnd();
+
+
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

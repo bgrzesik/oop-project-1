@@ -95,6 +95,7 @@ public class SimulationConfig {
 
     public void saveToFile(FileHandle file) {
         Json json = new Json(JsonWriter.OutputType.json);
+        json.setUsePrototypes(false);
         json.toJson(this, file);
     }
 

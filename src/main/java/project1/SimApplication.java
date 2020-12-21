@@ -159,6 +159,13 @@ public class SimApplication extends ApplicationAdapter {
                         .format("Simulation #%d", widget.getSimulationIdx());
                 json.writeValue("name", name);
 
+                json.getWriter()
+                    .name("configuration");
+
+                widget.getSimulation()
+                      .getConfig()
+                      .writeToJson(json);
+
                 StatisticsSystem statistics = widget.getSimulation()
                                                     .getTickListener(StatisticsSystem.class);
 

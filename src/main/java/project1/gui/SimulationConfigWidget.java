@@ -48,125 +48,123 @@ public class SimulationConfigWidget implements Widget {
             return;
         }
 
-        if (ui.begin("This a bug and popup needs parent window", (KMutableProperty0<Boolean>) null, WindowFlag.NoDecoration.i)) {
-            ui.setWindowPos(new Vec2(Integer.MAX_VALUE, Integer.MAX_VALUE), Cond.Always);
-            ui.setWindowSize(new Vec2(0, 0), Cond.Always);
+        ui.setWindowPos(new Vec2(Integer.MAX_VALUE, Integer.MAX_VALUE), Cond.Always);
+        ui.setWindowSize(new Vec2(0, 0), Cond.Always);
 
-            if (!calledOpen) {
-                ui.openPopup(ID, PopupFlag.None.i);
-                calledOpen = true;
-            }
+        if (!calledOpen) {
+            ui.openPopup(ID, PopupFlag.None.i);
+            calledOpen = true;
+        }
 
-            if (ui.beginPopupModal(ID, (KMutableProperty0<Boolean>) null, WindowFlag.AlwaysAutoResize.i)) {
-                if (ui.collapsingHeader("Configurations", 0)) {
-                    FileHandle root = Gdx.files.getFileHandle(".", Files.FileType.Local);
-                    FileHandle[] list = root.list(".conf.json");
+        if (ui.beginPopupModal(ID, (KMutableProperty0<Boolean>) null, WindowFlag.AlwaysAutoResize.i)) {
+            if (ui.collapsingHeader("Configurations", 0)) {
+                FileHandle root = Gdx.files.getFileHandle(".", Files.FileType.Local);
+                FileHandle[] list = root.list(".conf.json");
 
-                    List<String> names = Arrays.stream(list)
-                                               .map(FileHandle::nameWithoutExtension)
-                                               .filter(e -> e.endsWith(".conf"))
-                                               .map(e -> e.substring(0, e.length() - 5))
-                                               .collect(Collectors.toList());
-                    names.add(0, "<New>");
-                    names.add(1, "<Default>");
+                List<String> names = Arrays.stream(list)
+                                           .map(FileHandle::nameWithoutExtension)
+                                           .filter(e -> e.endsWith(".conf"))
+                                           .map(e -> e.substring(0, e.length() - 5))
+                                           .collect(Collectors.toList());
+                names.add(0, "<New>");
+                names.add(1, "<Default>");
 
-                    if (ui.combo("Configuration", selectedConfiguration, names, 10)) {
-                        if (selectedConfiguration.get() == 1) {
-                            Arrays.fill(configurationNameBuf, (byte) 0);
-                        } else if (selectedConfiguration.get() != 0) {
-                            byte[] bytes = names.get(selectedConfiguration.get()).getBytes();
-                            Arrays.fill(configurationNameBuf, (byte) 0);
-                            System.arraycopy(bytes, 0, configurationNameBuf, 0, bytes.length);
-                        }
+                if (ui.combo("Configuration", selectedConfiguration, names, 10)) {
+                    if (selectedConfiguration.get() == 1) {
+                        Arrays.fill(configurationNameBuf, (byte) 0);
+                    } else if (selectedConfiguration.get() != 0) {
+                        byte[] bytes = names.get(selectedConfiguration.get()).getBytes();
+                        Arrays.fill(configurationNameBuf, (byte) 0);
+                        System.arraycopy(bytes, 0, configurationNameBuf, 0, bytes.length);
                     }
+                }
 
-                    ui.inputText("Name###confName", configurationNameBuf, 0, null, null);
+                ui.inputText("Name###confName", configurationNameBuf, 0, null, null);
 
-                    if (ui.button("Load", new Vec2(0, 0))) {
-                        String name = new String(configurationNameBuf).trim();
-                        if (name.length() == 0) {
-                            loadConfig(new SimulationConfig.Builder()
-                                               .loadDefault()
-                                               .build());
-                        } else {
-                            try {
-                                FileHandle child = root.child(name + ".conf.json");
-                                if (child.exists()) {
-                                    loadConfig(new SimulationConfig.Builder()
-                                                       .fromFile(child)
-                                                       .build());
-                                }
-                            } catch (Exception ignored) {
-                            }
-                        }
-                    }
-
-                    ui.sameLine(0, 5);
-
-                    if (ui.button("Save", new Vec2(0, 0))) {
-                        String name = new String(configurationNameBuf).trim();
+                if (ui.button("Load", new Vec2(0, 0))) {
+                    String name = new String(configurationNameBuf).trim();
+                    if (name.length() == 0) {
+                        loadConfig(new SimulationConfig.Builder()
+                                           .loadDefault()
+                                           .build());
+                    } else {
                         try {
                             FileHandle child = root.child(name + ".conf.json");
-                            this.buildConfig().saveToFile(child);
+                            if (child.exists()) {
+                                loadConfig(new SimulationConfig.Builder()
+                                                   .fromFile(child)
+                                                   .build());
+                            }
                         } catch (Exception ignored) {
                         }
                     }
-
-                }
-
-                ui.text("Parameters");
-
-                inputInt(ui, "World width", worldWidth);
-                inputInt(ui, "World height", worldHeight);
-
-                inputInt(ui, "Jungle width", jungleWidth);
-                inputInt(ui, "Jungle height", jungleHeight);
-
-                inputInt(ui, "Minimal energy required to breed", minimalBreedEnergy);
-                inputInt(ui, "Energy that bush spawns with", spawnBushEnergy);
-                inputInt(ui, "Amount of bushes that spawn in jungle every cycle", spawnInJungle);
-                inputInt(ui, "Amount of bushes that spawn outside jungle every cycle", spawnOutsideJungle);
-                inputInt(ui, "Energy that animal consume when moving", moveEnergy);
-
-                try {
-                    ui.inputFloat("A part of energy that parent gives to child", parentEnergyPart, 0.01f, 0.1f, "%.3f", 0);
-                } catch (StringIndexOutOfBoundsException ignored) {
-                    parentEnergyPart.set(0.0f);
-                }
-
-                ui.separator();
-
-                ui.text("Systems");
-                ui.checkbox("Spawn", spawnSystemOn);
-                ui.sameLine(0, 5);
-                ui.checkbox("Move", moveSystemOn);
-                ui.sameLine(0, 5);
-                ui.checkbox("Death", deathSystemOn);
-                ui.sameLine(0, 5);
-                ui.checkbox("Statistics", statisticsSystemOn);
-                ui.sameLine(0, 5);
-                ui.checkbox("Breed", breedingSystemOn);
-                ui.sameLine(0, 5);
-                ui.checkbox("Feed", feedingSystemOn);
-
-                ui.separator();
-
-                if (ui.button("Start", new Vec2(0, 0))) {
-                    ui.closeCurrentPopup();
-
-                    this.pendingConfig = buildConfig();
                 }
 
                 ui.sameLine(0, 5);
 
-                if (ui.button("Cancel", new Vec2(0, 0))) {
-                    ui.closeCurrentPopup();
+                if (ui.button("Save", new Vec2(0, 0))) {
+                    String name = new String(configurationNameBuf).trim();
+                    try {
+                        FileHandle child = root.child(name + ".conf.json");
+                        this.buildConfig().saveToFile(child);
+                    } catch (Exception ignored) {
+                    }
                 }
 
-                ui.endPopup();
             }
-            ui.end();
+
+            ui.text("Parameters");
+
+            inputInt(ui, "World width", worldWidth);
+            inputInt(ui, "World height", worldHeight);
+
+            inputInt(ui, "Jungle width", jungleWidth);
+            inputInt(ui, "Jungle height", jungleHeight);
+
+            inputInt(ui, "Minimal energy required to breed", minimalBreedEnergy);
+            inputInt(ui, "Energy that bush spawns with", spawnBushEnergy);
+            inputInt(ui, "Amount of bushes that spawn in jungle every cycle", spawnInJungle);
+            inputInt(ui, "Amount of bushes that spawn outside jungle every cycle", spawnOutsideJungle);
+            inputInt(ui, "Energy that animal consume when moving", moveEnergy);
+
+            try {
+                ui.inputFloat("A part of energy that parent gives to child", parentEnergyPart, 0.01f, 0.1f, "%.3f", 0);
+            } catch (StringIndexOutOfBoundsException ignored) {
+                parentEnergyPart.set(0.0f);
+            }
+
+            ui.separator();
+
+            ui.text("Systems");
+            ui.checkbox("Spawn", spawnSystemOn);
+            ui.sameLine(0, 5);
+            ui.checkbox("Move", moveSystemOn);
+            ui.sameLine(0, 5);
+            ui.checkbox("Death", deathSystemOn);
+            ui.sameLine(0, 5);
+            ui.checkbox("Statistics", statisticsSystemOn);
+            ui.sameLine(0, 5);
+            ui.checkbox("Breed", breedingSystemOn);
+            ui.sameLine(0, 5);
+            ui.checkbox("Feed", feedingSystemOn);
+
+            ui.separator();
+
+            if (ui.button("Start", new Vec2(0, 0))) {
+                ui.closeCurrentPopup();
+
+                this.pendingConfig = buildConfig();
+            }
+
+            ui.sameLine(0, 5);
+
+            if (ui.button("Cancel", new Vec2(0, 0))) {
+                ui.closeCurrentPopup();
+            }
+
+            ui.endPopup();
         }
+        ui.end();
     }
 
 

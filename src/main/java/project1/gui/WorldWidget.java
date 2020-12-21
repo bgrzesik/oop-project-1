@@ -91,7 +91,9 @@ public class WorldWidget implements Widget {
         this.world.accept(new WorldActorVisitorAdapter() {
             @Override
             public void visitAnimal(Animal animal) {
-                drawAnimal(drawList, pos, animal.getX(), animal.getY());
+                boolean highlighted = animal.getGenome()
+                                            .equals(simulationWidget.getSelectedGenome());
+                drawAnimal(drawList, pos, animal.getX(), animal.getY(), highlighted);
             }
         });
 
@@ -155,22 +157,23 @@ public class WorldWidget implements Widget {
     }
 
     public void drawBush(DrawList drawList, Vec2 pos, int x, int y) {
-        drawTexture(drawList, pos, x, y, bushTexture);
+        drawTexture(drawList, pos, x, y, bushTexture, 0xffffffff);
 
     }
 
-    public void drawAnimal(DrawList drawList, Vec2 pos, int x, int y) {
-        drawTexture(drawList, pos, x, y, animalTexture);
+    public void drawAnimal(DrawList drawList, Vec2 pos, int x, int y, boolean highlighted) {
+        int color = highlighted ? 0xff0000ff : 0xffffffff;
+        drawTexture(drawList, pos, x, y, animalTexture, color);
     }
 
-    public void drawTexture(DrawList drawList, Vec2 pos, int x, int y, Texture texture) {
+    public void drawTexture(DrawList drawList, Vec2 pos, int x, int y, Texture texture, int color) {
         y = world.getHeight() - y - 1;
         pos = pos.plus(new Vec2(x, y).times(cellSize));
 
         drawList.addImage(texture.getTextureObjectHandle(),
                           pos.plus(0, 0),
                           pos.plus(cellSize, cellSize),
-                          new Vec2(0, 0), new Vec2(1, 1), 0xffffffff);
+                          new Vec2(0, 0), new Vec2(1, 1), color);
     }
 
 }

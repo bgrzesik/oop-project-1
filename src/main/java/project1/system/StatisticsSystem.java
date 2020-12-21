@@ -4,12 +4,16 @@ import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
 import project1.actors.WorldActor;
+import project1.data.GenomeFrequency;
 import project1.data.Statistics;
 import project1.listeners.DeathListener;
 import project1.listeners.SpawnListener;
 import project1.tick.TickListener;
 import project1.visitors.WorldActorVisitor;
 import project1.world.World;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathListener, SpawnListener {
     private int aliveAnimalsCount;
@@ -23,6 +27,8 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
     private final int[] genes = new int[8];
     private int bushCount = 0;
 
+    private Map<String, GenomeFrequency> genomes = new TreeMap<>();
+
 
     @Override
     public void tick(Simulation simulation) {
@@ -31,6 +37,8 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
         this.childrenSum = 0;
         this.energySum = 0;
         this.ageSum = 0;
+
+        this.genomes.clear();
 
         for (int i = 0; i < 8; i++) {
             genes[i] = 0;
@@ -53,6 +61,10 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
         this.childrenSum += animal.getChildrenCount();
         this.energySum += animal.getEnergy();
         this.ageSum += animal.getAge();
+
+        String genome = animal.getGenome();
+        this.genomes.computeIfAbsent(genome, GenomeFrequency::new)
+                    .incrementFrequency();
 
         for (int gene : animal.getGenes()) {
             this.genes[gene] += 1;
@@ -93,6 +105,10 @@ public class StatisticsSystem implements WorldActorVisitor, TickListener, DeathL
         stat.setChildrenAverage(this.getChildrenAverage());
         stat.setDeathAgeAverage(this.getDeathAgeAverage());
         return stat;
+    }
+
+    public Map<String, GenomeFrequency> getGenomeFrequency() {
+        return genomes;
     }
 
     public int getAliveAnimalsCount() {

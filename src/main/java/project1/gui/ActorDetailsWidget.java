@@ -92,16 +92,8 @@ public class ActorDetailsWidget implements Widget {
                 ui.bulletText("Genes");
                 ui.nextColumn();
 
-                int[] genes = animal.getGenes();
-
-                String[] genesString = new String[32];
-                for (int i = 0; i < 32; i++) {
-                    genesString[i] = String.valueOf(genes[i]);
-                }
-
-                ui.text("%s", String.join("", genesString));
+                ui.text("%s", animal.getGenome());
                 ui.nextColumn();
-
 
                 ui.columns(1, "", false);
                 if (ui.treeNode(String.format("Children (%d)", animal.getChildrenCount()))) {

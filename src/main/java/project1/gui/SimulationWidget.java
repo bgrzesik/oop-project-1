@@ -8,10 +8,13 @@ import kotlin.reflect.KMutableProperty0;
 import project1.Simulation;
 import project1.actors.Animal;
 import project1.actors.Bush;
+import project1.data.GenomeFrequency;
 import project1.system.StatisticsSystem;
 import project1.world.World;
 
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeSet;
 
 public class SimulationWidget implements Widget {
     public static final float MIN_TIME_SPEED = 1.0f / 16.0f;
@@ -40,6 +43,8 @@ public class SimulationWidget implements Widget {
     private float[] energyHist = new float[30];
     private float[] ageHist = new float[30];
     private float[] deathAgeHist = new float[30];
+
+    private String selectedGenome = null;
 
     public SimulationWidget(int simulationIdx, Simulation simulation) {
         this.simulation = simulation;
@@ -100,7 +105,7 @@ public class SimulationWidget implements Widget {
             }
         }
 
-        if (ui.collapsingHeader("Statistics", 0)) {
+        if (ui.collapsingHeader("Statistics", 0) && statisticsSystem != null) {
 
             Vec2 graphSize = new Vec2(300, 100);
 
@@ -115,40 +120,63 @@ public class SimulationWidget implements Widget {
 
             String text;
 
-            if (statisticsSystem != null) {
-                text = String.format("Alive: %d", statisticsSystem.getAliveAnimalsCount());
-                ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
+            text = String.format("Alive: %d", statisticsSystem.getAliveAnimalsCount());
+            ui.plotLines(text, aliveHist, 0, "", 0, aliveScaleMax, graphSize, 1);
 
-                text = String.format("Bush: %d", statisticsSystem.getPresentBushCount());
-                ui.plotLines(text, bushHist, 0, "", 0, bushScaleMax, graphSize, 1);
+            text = String.format("Bush: %d", statisticsSystem.getPresentBushCount());
+            ui.plotLines(text, bushHist, 0, "", 0, bushScaleMax, graphSize, 1);
 
-                text = String.format("Children: %.2f", statisticsSystem.getChildrenAverage());
-                ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
+            text = String.format("Children: %.2f", statisticsSystem.getChildrenAverage());
+            ui.plotLines(text, childrenHist, 0, "", 0, childrenScaleMax, graphSize, 1);
 
-                text = String.format("Age: %.2f", statisticsSystem.getAgeAverage());
-                ui.plotLines(text, ageHist, 0, "", 40, childrenScaleMax, graphSize, 1);
+            text = String.format("Age: %.2f", statisticsSystem.getAgeAverage());
+            ui.plotLines(text, ageHist, 0, "", 40, childrenScaleMax, graphSize, 1);
 
-                text = String.format("Energy: %.2f", statisticsSystem.getEnergyAverage());
-                ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
+            text = String.format("Energy: %.2f", statisticsSystem.getEnergyAverage());
+            ui.plotLines(text, energyHist, 0, "", 0, energyScaleMax, graphSize, 1);
 
-                text = String.format("Death age: %.2f", statisticsSystem.getDeathAgeAverage());
-                ui.plotLines(text, deathAgeHist, 0, "", 0, deathAgeMax, graphSize, 1);
+            text = String.format("Death age: %.2f", statisticsSystem.getDeathAgeAverage());
+            ui.plotLines(text, deathAgeHist, 0, "", 0, deathAgeMax, graphSize, 1);
 
-                ui.text("Epoch: %d", simulation.getWorld().getEpoch());
+            ui.text("Epoch: %d", simulation.getWorld().getEpoch());
 
-                ui.text("Dead: %d", statisticsSystem.getDeadCount());
+            ui.text("Dead: %d", statisticsSystem.getDeadCount());
 
-                ui.text("Bushes total: %d", statisticsSystem.getBushCount());
-            }
+            ui.text("Bushes total: %d", statisticsSystem.getBushCount());
 
             float[] genes = new float[8];
-            if (statisticsSystem != null && statisticsSystem.getAliveAnimalsCount() != 0) {
+            if (statisticsSystem.getAliveAnimalsCount() != 0) {
                 for (int i = 0; i < 8; i++) {
                     genes[i] = statisticsSystem.getGenes()[i] /
                             (float) statisticsSystem.getAliveAnimalsCount() / 8.0f;
                 }
             }
             ui.plotHistogram("Genes", genes, 0, "", 0.0f, 1.0f, new Vec2(100, 100), 1);
+
+            if (ui.collapsingHeader("Genomes", 0)) {
+                ui.columns(2, "", true);
+
+                Map<String, GenomeFrequency> genomes = statisticsSystem.getGenomeFrequency();
+                TreeSet<GenomeFrequency> frequencies = new TreeSet<>(genomes.values());
+
+                for (GenomeFrequency frequency : frequencies) {
+                    boolean selected = frequency.getGenome().equals(selectedGenome);
+
+                    if (ui.selectable(frequency.getGenome(), selected, 0, new Vec2(0, 0))) {
+                        if (frequency.getGenome().equals(selectedGenome)) {
+                            selectedGenome = null;
+                        } else {
+                            selectedGenome = frequency.getGenome();
+                        }
+                    }
+
+                    ui.nextColumn();
+                    ui.text("%d", frequency.getFrequency());
+                    ui.nextColumn();
+                }
+
+                ui.columns(1, "", false);
+            }
         }
 
         if (ui.collapsingHeader("Add actors", 0)) {
@@ -246,6 +274,9 @@ public class SimulationWidget implements Widget {
         return showLines[0];
     }
 
+    public String getSelectedGenome() {
+        return selectedGenome;
+    }
 
     public Simulation getSimulation() {
         return simulation;

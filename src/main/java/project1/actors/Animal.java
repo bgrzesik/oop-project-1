@@ -48,6 +48,16 @@ public class Animal extends AbstractWorldActor implements MoveObservable {
         return genes;
     }
 
+    public String getGenome() {
+        String[] genesString = new String[32];
+
+        for (int i = 0; i < 32; i++) {
+            genesString[i] = String.valueOf(genes[i]);
+        }
+
+        return String.join("", genesString);
+    }
+
     public Direction getDirection() {
         return direction;
     }
